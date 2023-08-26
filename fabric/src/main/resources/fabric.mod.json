@@ -1,32 +1,30 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "ritchiesprojectilelib",
   "version": "${version}",
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Ritchie's Projectile Library",
+  "description": "A Minecraft modding library for better projectiles.",
   "authors": [
-    "Me!"
+    "rbasamoyai"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/Wagers-of-Industrial-Warfare/RitchiesProjectileLib",
+    "sources": "https://github.com/Wagers-of-Industrial-Warfare/RitchiesProjectileLib"
   },
-  "license": "Insert License Here",
-  "icon": "assets/examplemod/icon.png",
+  "license": "MIT License",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.examplemod.fabric.ExampleModFabric"
+      "rbasamoyai.ritchiesprojectilelib.fabric.RitchiesProjectileLibFabric"
     ]
   },
   "mixins": [
-    "examplemod.mixins.json",
-    "examplemod-common.mixins.json"
+    "ritchiesprojectilelib.mixins.json",
+    "ritchiesprojectilelib-fabric.mixins.json"
   ],
   "depends": {
     "minecraft": "${minecraft_version}",
     "fabricloader": ">=${fabric_loader_version}",
-    "fabric-api": ">=${fabric_api_version}",
-    "create": "${create_version}"
+    "fabric-api": ">=${fabric_api_version}"
   }
 }
