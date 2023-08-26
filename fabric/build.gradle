@@ -20,6 +20,8 @@ configurations {
 }
 
 repositories {
+    maven { url = "https://mvn.devos.one/snapshots/" } // Porting Lib
+    maven { url = "https://jitpack.io/" } // Mixin Extras, Fabric ASM
 }
 
 dependencies {
@@ -27,6 +29,8 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive = false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive = false }
     modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
+
+    modApi(include("io.github.fabricators_of_create:Porting-Lib:${porting_lib_version}+${minecraft_version}"))
 }
 
 processResources {
@@ -35,7 +39,8 @@ processResources {
             "version", version,
             "fabric_loader_version", fabric_loader_version,
             "fabric_api_version", fabric_api_version,
-            "minecraft_version", minecraft_version
+            "minecraft_version", minecraft_version,
+            "porting_lib_version", porting_lib_version
     )
     properties.forEach((k, v) -> inputs.property(k, v))
 
