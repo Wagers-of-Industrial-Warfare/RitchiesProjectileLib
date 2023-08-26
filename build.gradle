@@ -1,7 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.0-SNAPSHOT" apply false
-    id "io.github.juuxel.loom-quiltflower" version "1.+" apply false // Quiltflower, a better decompiler
+    id "io.github.juuxel.loom-vineflower" version "1.+" apply false
     id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 }
 
@@ -11,7 +11,7 @@ architectury {
 
 subprojects {
     apply plugin: "dev.architectury.loom"
-    apply plugin: "io.github.juuxel.loom-quiltflower"
+    apply plugin: "io.github.juuxel.loom-vineflower"
 
     loom {
         silentMojangMappingsLicense()
@@ -19,17 +19,9 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url = "https://maven.shedaniel.me/" } // Cloth Config, REI
-        maven { url = "https://dvs1.progwml6.com/files/maven/" } // JEI
+        maven { url = "https://maven.shedaniel.me/" } // Cloth Config
         maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
         maven { url = "https://maven.quiltmc.org/repository/release" } // Quilt Mappings
-        maven { // Flywheel
-            url = "https://maven.tterrag.com/"
-            content {
-                // need to be specific here due to version overlaps
-                includeGroup("com.jozufozu.flywheel")
-            }
-        }
     }
 
     dependencies {
@@ -50,20 +42,13 @@ allprojects {
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
 
-    archivesBaseName = rootProject.archives_base_name
+    archivesBaseName = rootProject.mod_id
     group = rootProject.maven_group
 
-    // Formats the mod version to include the loader, Minecraft version, and build number (if present)
-    // example: 1.0.0+fabric-1.18.2-100
     String buildNumber = System.getenv("GITHUB_RUN_NUMBER")
     version = "${mod_version}+${project.name}-${minecraft_version}" + (buildNumber != null ? "-${buildNumber}" : "")
 
     repositories {
-        // Add repositories to retrieve artifacts from in here.
-        // You should only use this when depending on other mods because
-        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
-        // for more information about repositories.
     }
 
     tasks.withType(JavaCompile) {

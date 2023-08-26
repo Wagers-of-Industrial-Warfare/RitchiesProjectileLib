@@ -1,35 +1,26 @@
 modLoader = "javafml"
 loaderVersion = "[${forge_version},)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/Wagers-of-Industrial-Warfare/RitchiesProjectileLib/issues"
+license = "MIT License"
 
 [[mods]]
-modId = "examplemod"
+modId = "ritchiesprojectilelib"
 version = "${version}"
-displayName = "Example Mod"
-authors = "Me!"
-description = '''
-This is an example description! Tell everyone what your mod is about!
-'''
+displayName = "Ritchie's Projectile Library"
+authors = "rbasamoyai"
+description = '''A Minecraft modding library for better projectiles.'''
 logoFile = "icon.png"
 
-[[dependencies.examplemod]]
+[[dependencies.ritchiesprojectilelib]]
 modId = "forge"
 mandatory = true
 versionRange = "[${forge_version},)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.examplemod]]
+[[dependencies.ritchiesprojectilelib]]
 modId = "minecraft"
 mandatory = true
 versionRange = "${minecraft_version}"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.examplemod]]
-modId="create"
-mandatory=true
-versionRange="${create_version}"
-ordering="NONE"
-side="BOTH"
