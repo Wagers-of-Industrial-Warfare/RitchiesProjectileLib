@@ -16,6 +16,9 @@
   "entrypoints": {
     "main": [
       "rbasamoyai.ritchiesprojectilelib.fabric.RitchiesProjectileLibFabric"
+    ],
+    "client": [
+      "rbasamoyai.ritchiesprojectilelib.fabric.RitchiesProjectileLibFabricClient"
     ]
   },
   "mixins": [
