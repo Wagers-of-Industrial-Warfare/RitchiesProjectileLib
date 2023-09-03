@@ -2,7 +2,7 @@ plugins {
     id "architectury-plugin" version "3.+"
     id "dev.architectury.loom" version "1.+" apply false
     id "io.github.juuxel.loom-vineflower" version "1.+" apply false // Vineflower
-    id "io.github.p03w.machete" version "1.+" apply false // automatic jar compressing on build
+    id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
 }
 
 architectury {
@@ -22,10 +22,8 @@ boolean ci = System.getenv("CI") != null ? System.getenv("CI").toBoolean() : fal
 
 subprojects {
     apply plugin: "dev.architectury.loom"
-    apply plugin: "architectury-plugin"
     apply plugin: "io.github.juuxel.loom-vineflower"
     apply plugin: "maven-publish"
-    apply plugin: "io.github.p03w.machete"
 
     loom {
         silentMojangMappingsLicense()
@@ -50,32 +48,11 @@ subprojects {
 
         // see each subproject for dependencies.
     }
-
-    base {
-        archivesName.set(rootProject.mod_id)
-        group = rootProject.maven_group
-    }
-
-    version = "${mod_version}-${getGitHash()}+${minecraft_version}-${project.name}"
-
-    java {
-        withSourcesJar()
-    }
-
-    machete {
-        // disable machete locally for faster builds
-        enabled = ci
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = "UTF-8"
-    }
-
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                artifactId = rootProject.mod_id + "-" + project.name + "-" + minecraft_version
-                version = mod_version + "+" + getGitHash()
+                artifactId = rootProject.mod_id
+                version = "${mod_version}-${getGitHash()}+${minecraft_version}-${project.name}"
                 from components.java
             }
         }
@@ -94,5 +71,30 @@ subprojects {
                 credentials(PasswordCredentials)
             }
         }
+    }
+}
+
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+
+    base {
+        archivesName.set(rootProject.mod_id)
+        group = rootProject.maven_group
+    }
+
+    version = "${mod_version}-${getGitHash()}+${minecraft_version}-${project.name}"
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    machete {
+        // disable machete locally for faster builds
+        enabled = ci
     }
 }
