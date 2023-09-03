@@ -2,7 +2,7 @@ plugins {
     id "architectury-plugin" version "3.+"
     id "dev.architectury.loom" version "1.+" apply false
     id "io.github.juuxel.loom-vineflower" version "1.+" apply false // Vineflower
-    id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
+    id "io.github.p03w.machete" version "1.+" apply false // automatic jar compressing on build
 }
 
 architectury {
@@ -22,8 +22,10 @@ boolean ci = System.getenv("CI") != null ? System.getenv("CI").toBoolean() : fal
 
 subprojects {
     apply plugin: "dev.architectury.loom"
+    apply plugin: "architectury-plugin"
     apply plugin: "io.github.juuxel.loom-vineflower"
     apply plugin: "maven-publish"
+    apply plugin: "io.github.p03w.machete"
 
     loom {
         silentMojangMappingsLicense()
@@ -34,6 +36,7 @@ subprojects {
         maven { url = "https://maven.shedaniel.me/" } // Cloth Config
         maven { url = "https://maven.parchmentmc.org" } // Parchment mappings
         maven { url = "https://maven.quiltmc.org/repository/release" } // Quilt Mappings
+        maven { url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" } // DevAuth
     }
 
     dependencies {
@@ -47,10 +50,31 @@ subprojects {
 
         // see each subproject for dependencies.
     }
+
+    base {
+        archivesName.set(rootProject.mod_id)
+        group = rootProject.maven_group
+    }
+
+    version = "${mod_version}-${getGitHash()}+${minecraft_version}-${project.name}"
+
+    java {
+        withSourcesJar()
+    }
+
+    machete {
+        // disable machete locally for faster builds
+        enabled = ci
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = "UTF-8"
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
-                artifactId = rootProject.archives_base_name + "-" + project.name + "-" + minecraft_version
+                artifactId = rootProject.mod_id + "-" + project.name + "-" + minecraft_version
                 version = mod_version + "+" + getGitHash()
                 from components.java
             }
@@ -70,36 +94,5 @@ subprojects {
                 credentials(PasswordCredentials)
             }
         }
-    }
-}
-
-allprojects {
-    apply plugin: "java"
-    apply plugin: "architectury-plugin"
-
-    base {
-        archivesName.set(rootProject.archives_base_name)
-        group = rootProject.maven_group
-    }
-
-    // Formats the mod version to include the loader, Minecraft version, and build number (if present)
-    // example: 1.0.0+fabric-1.18.2-100
-
-    version = mod_version + "+" + getGitHash()
-
-    repositories {
-    }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.encoding = "UTF-8"
-    }
-
-    java {
-        withSourcesJar()
-    }
-
-    machete {
-        // disable machete locally for faster builds
-        enabled = ci
     }
 }
