@@ -59,7 +59,7 @@ subprojects {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/wagers-of-industrial-warfare/multiloadertemplate"
+                url = "https://maven.pkg.github.com/wagers-of-industrial-warfare/ritchiesprojectilelib"
                 credentials {
                     username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
                     password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
@@ -67,7 +67,7 @@ subprojects {
             }
             maven {
                 name = "realRobotixMaven"
-                url = "https://maven.realrobotix.me/multiloadertemplate"
+                url = "https://maven.realrobotix.me/ritchiesprojectilelib"
                 credentials(PasswordCredentials)
             }
         }
