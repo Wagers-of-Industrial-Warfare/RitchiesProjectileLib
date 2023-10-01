@@ -22,6 +22,7 @@ configurations {
 repositories {
     maven { url = "https://mvn.devos.one/snapshots/" } // Porting Lib
     maven { url = "https://jitpack.io/" } // Mixin Extras, Fabric ASM
+    maven { url = "https://cursemaven.com" } // Forge Config API Port
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${devauth_fabric_version}")
 
     modApi(include("io.github.fabricators_of_create:Porting-Lib:${porting_lib_version}+${minecraft_version}"))
+    modApi(include("curse.maven:forge-config-api-port-fabric-547434:${config_api_id}"))
 }
 
 processResources {
