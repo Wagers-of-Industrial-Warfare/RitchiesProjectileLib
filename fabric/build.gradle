@@ -34,6 +34,8 @@ dependencies {
 
     modApi(include("io.github.fabricators_of_create:Porting-Lib:${porting_lib_version}+${minecraft_version}"))
     modApi(include("curse.maven:forge-config-api-port-fabric-547434:${config_api_id}"))
+    modApi(include("com.electronwill.night-config:core:${night_config_version}"))
+    modApi(include("com.electronwill.night-config:toml:${night_config_version}"))
 }
 
 processResources {
