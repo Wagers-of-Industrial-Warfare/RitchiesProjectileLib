@@ -8,7 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraftforge.api.ModLoadingContext;
-import net.minecraftforge.api.fml.event.config.ModConfigEvent;
+import net.minecraftforge.api.fml.event.config.ModConfigEvents;
 import net.minecraftforge.fml.config.ModConfig;
 import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
@@ -25,8 +25,8 @@ public class RitchiesProjectileLibFabric implements ModInitializer {
 
         RPLConfigs.registerConfigs((t, c) -> ModLoadingContext.registerConfig(RitchiesProjectileLib.MOD_ID, t, c));
 
-        ModConfigEvent.LOADING.register(this::onModConfigLoad);
-        ModConfigEvent.RELOADING.register(this::onModConfigReload);
+        ModConfigEvents.loading(RitchiesProjectileLib.MOD_ID).register(this::onModConfigLoad);
+        ModConfigEvents.reloading(RitchiesProjectileLib.MOD_ID).register(this::onModConfigReload);
     }
 
     public void onPlayerJoin(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
