@@ -24,13 +24,13 @@ public class RPLNetworkImpl {
 		NETWORK.messageBuilder(ForgeServerboundPacket.class, id++)
 				.encoder(ForgeServerboundPacket::encode)
 				.decoder(ForgeServerboundPacket::new)
-				.consumer(ForgeServerboundPacket::handle)
+				.consumerMainThread(ForgeServerboundPacket::handle)
 				.add();
 
 		NETWORK.messageBuilder(ForgeClientboundPacket.class, id++)
 				.encoder(ForgeClientboundPacket::encode)
 				.decoder(ForgeClientboundPacket::new)
-				.consumer(ForgeClientboundPacket::handle)
+				.consumerMainThread(ForgeClientboundPacket::handle)
 				.add();
 	}
 
