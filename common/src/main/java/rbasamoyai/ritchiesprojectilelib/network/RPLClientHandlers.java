@@ -1,7 +1,7 @@
 package rbasamoyai.ritchiesprojectilelib.network;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 
 public class RPLClientHandlers {
@@ -10,7 +10,7 @@ public class RPLClientHandlers {
 		if (RPLNetwork.getVersion().equals(pkt.serverVersion())) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.getConnection() != null)
-			mc.getConnection().onDisconnect(new TextComponent("Ritchie's Projectile Library on the client uses a different network format than the server.")
+			mc.getConnection().onDisconnect(Component.literal("Ritchie's Projectile Library on the client uses a different network format than the server.")
 					.append(" Please use a matching format."));
 	}
 

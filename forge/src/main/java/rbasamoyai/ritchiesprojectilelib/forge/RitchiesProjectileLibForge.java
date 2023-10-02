@@ -26,13 +26,13 @@ public class RitchiesProjectileLibForge {
     }
 
     public void onPlayerLogin(final PlayerLoggedInEvent evt) {
-        if (evt.getPlayer() instanceof ServerPlayer splayer) {
+        if (evt.getEntity() instanceof ServerPlayer splayer) {
             RitchiesProjectileLib.onPlayerJoin(splayer);
         }
     }
 
-    public void onServerLevelTick(final TickEvent.WorldTickEvent evt) {
-        if (evt.world instanceof ServerLevel slevel) {
+    public void onServerLevelTick(final TickEvent.LevelTickEvent evt) {
+        if (evt.level instanceof ServerLevel slevel) {
             if (evt.phase == TickEvent.Phase.END) {
                 RitchiesProjectileLib.onServerLevelTickEnd(slevel);
             }
