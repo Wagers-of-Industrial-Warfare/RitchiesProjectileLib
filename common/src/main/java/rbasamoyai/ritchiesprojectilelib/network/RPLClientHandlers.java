@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 public class RPLClientHandlers {
 
 	public static void checkVersion(ClientboundCheckChannelVersionPacket pkt) {
-		if (RPLNetwork.VERSION.equals(pkt.serverVersion())) return;
+		if (RPLNetwork.getVersion().equals(pkt.serverVersion())) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.getConnection() != null)
 			mc.getConnection().onDisconnect(new TextComponent("Ritchie's Projectile Library on the client uses a different network format than the server.")
