@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.saveddata.SavedData;
+import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
 import java.util.*;
 
@@ -86,7 +87,7 @@ public class ChunkManager extends SavedData {
 		}
 		this.loadedPreviously.clear();
 
-		int MAX_ITER = 64; // TODO: config
+		int MAX_ITER = RPLConfigs.server().maxChunksForceLoaded.get();
 		if (MAX_ITER != 0) {
 			int p = 0;
 			boolean iteratedAll = true;

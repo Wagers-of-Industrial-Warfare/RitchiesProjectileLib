@@ -6,14 +6,19 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
+import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
 @Mod(RitchiesProjectileLib.MOD_ID)
 public class RitchiesProjectileLibForge {
 
     public RitchiesProjectileLibForge() {
         RitchiesProjectileLib.init();
+
+        ModLoadingContext mlContext = ModLoadingContext.get();
+        RPLConfigs.registerConfigs(mlContext::registerConfig);
 
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         forgeBus.addListener(this::onPlayerLogin);
