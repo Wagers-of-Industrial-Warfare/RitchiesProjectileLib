@@ -15,38 +15,44 @@ import java.util.*;
 public class ChunkManager extends SavedData {
 
 	private final SetMultimap<UUID, Long> chunks;
+	private final Set<Long> toUnload;
 	private final Set<Long> iterated = new HashSet<>();
-	private final Set<Long> toUnload = new HashSet<>();
 	private final Set<Long> loadedPreviously = new HashSet<>();
 
 	public ChunkManager() {
-		this(HashMultimap.create());
+		this(HashMultimap.create(), new HashSet<>());
 	}
 
-	private ChunkManager(SetMultimap<UUID, Long> map) {
+	private ChunkManager(SetMultimap<UUID, Long> map, Set<Long> toUnload) {
 		this.chunks = map;
+		this.toUnload = toUnload;
 	}
 
 	public static ChunkManager load(CompoundTag tag) {
 		SetMultimap<UUID, Long> chunks = HashMultimap.create();
-		ListTag list = tag.getList("LoadedChunks", Tag.TAG_COMPOUND);
-		for (int i = 0; i < list.size(); ++i) {
-			CompoundTag eTag = list.getCompound(i);
+		ListTag loadedList = tag.getList("LoadedChunks", Tag.TAG_COMPOUND);
+		for (int i = 0; i < loadedList.size(); ++i) {
+			CompoundTag eTag = loadedList.getCompound(i);
 			chunks.put(eTag.getUUID("UUID"), eTag.getLong("ChunkPos"));
 		}
-		return new ChunkManager(chunks);
+		Set<Long> toUnload = new HashSet<>();
+		for (long l : tag.getLongArray("ToUnload")) {
+			toUnload.add(l);
+		}
+		return new ChunkManager(chunks, toUnload);
 	}
 
 	@Override
 	public CompoundTag save(CompoundTag compoundTag) {
-		ListTag list = new ListTag();
+		ListTag loadedList = new ListTag();
 		for (Map.Entry<UUID, Long> e : this.chunks.entries()) {
 			CompoundTag eTag = new CompoundTag();
 			eTag.putUUID("UUID", e.getKey());
 			eTag.putLong("ChunkPos", e.getValue());
-			list.add(eTag);
+			loadedList.add(eTag);
 		}
-		compoundTag.put("LoadedChunks", list);
+		compoundTag.put("LoadedChunks", loadedList);
+		compoundTag.putLongArray("ToUnload", new ArrayList<>(this.toUnload));
 		return compoundTag;
 	}
 
