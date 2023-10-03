@@ -23,7 +23,7 @@ public class ServerEntityMixin {
 		if (this.entity instanceof PreciseProjectile) {
 			Vec3 pos = this.entity.position();
 			Vec3 vel = this.entity.getDeltaMovement();
-			RPLNetwork.sendToClientTracking(new ClientboundPreciseMotionSyncPacket(this.entity.getId(), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, this.entity.getYRot(), this.entity.getXRot(), this.entity.isOnGround(), 3), this.entity);
+			RPLNetwork.sendToClientTracking(new ClientboundPreciseMotionSyncPacket(this.entity.getId(), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, this.entity.getYRot(), this.entity.getXRot(), this.entity.onGround(), 3), this.entity);
 			this.entity.hasImpulse = false;
 		}
 	}
