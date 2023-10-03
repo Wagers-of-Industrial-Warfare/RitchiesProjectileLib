@@ -9,14 +9,15 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
 import rbasamoyai.ritchiesprojectilelib.network.RootPacket;
 
-import static rbasamoyai.ritchiesprojectilelib.network.RPLNetwork.getVersion;
+import static rbasamoyai.ritchiesprojectilelib.network.RPLNetwork.VERSION;
 
 public class RPLNetworkImpl {
 
 	private static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
 			.named(RitchiesProjectileLib.resource("network"))
-			.clientAcceptedVersions(s -> getVersion().equals(s))
-			.serverAcceptedVersions(s -> getVersion().equals(s))
+			.networkProtocolVersion(() -> VERSION)
+			.clientAcceptedVersions(VERSION::equals)
+			.serverAcceptedVersions(VERSION::equals)
 			.simpleChannel();
 
 	public static void sidedInit() {
