@@ -82,7 +82,6 @@ public class ChunkManager extends SavedData {
 	}
 
 	public void tick(ServerLevel level) {
-		Set<UUID> badEntities = new HashSet<>();
 		Set<Long> badChunks = new HashSet<>();
 		ServerChunkCache source = level.getChunkSource();
 		LongSet vanillaForcedChunks = level.getForcedChunks();
@@ -105,12 +104,6 @@ public class ChunkManager extends SavedData {
 					this.iterated.add(l);
 					iteratedAll = false;
 				}
-				UUID uuid = e.getKey();
-				if (badEntities.contains(uuid)) continue;
-				if (level.getEntity(uuid) == null) {
-					badEntities.add(uuid);
-					continue;
-				}
 				if (vanillaForcedChunks.contains(l) || badChunks.contains(l)) continue;
 				if (!loadChunkNoGenerate(level, new ChunkPos(l))) {
 					badChunks.add(l);
@@ -120,9 +113,6 @@ public class ChunkManager extends SavedData {
 				if (MAX_ITER != -1 && ++p == MAX_ITER) break;
 			}
 			if (iteratedAll) this.iterated.clear();
-		}
-		for (UUID uuid : badEntities) {
-			this.chunks.removeAll(uuid);
 		}
 		Set<UUID> keys = new HashSet<>(this.chunks.keySet());
 		Set<Long> unloadCopy = new HashSet<>(this.toUnload);
