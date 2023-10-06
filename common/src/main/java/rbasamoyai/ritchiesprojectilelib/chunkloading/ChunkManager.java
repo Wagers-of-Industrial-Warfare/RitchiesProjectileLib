@@ -8,6 +8,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -66,7 +67,7 @@ public class ChunkManager extends SavedData {
 	public void trackForcedChunk(Entity entity, ChunkPos pos, boolean loaded) {
 		long l = pos.toLong();
 		UUID uuid = entity.getUUID();
-		if (loaded && !this.chunks.containsEntry(uuid, l)) {
+		if (loaded && !entity.isRemoved() && !this.chunks.containsEntry(uuid, l)) {
 			this.chunks.put(uuid, l);
 			this.setDirty();
 		} else if (!loaded && this.chunks.containsEntry(uuid, l)) {
@@ -132,13 +133,14 @@ public class ChunkManager extends SavedData {
 		this.setDirty();
 	}
 
-	// Largely modeled after CraftBukkit World#loadChunk and World#unloadChunk
+	// Largely modeled after CraftBukkit World#loadChunk
 
 	private static boolean loadChunkNoGenerate(ServerLevel level, ChunkPos cpos) {
 		ServerChunkCache source = level.getChunkSource();
 		ChunkAccess access = source.getChunk(cpos.x, cpos.z, ChunkStatus.EMPTY, true);
 		if (access instanceof ProtoChunk) {
 			access = source.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, true);
+			source.removeRegionTicket(TicketType.UNKNOWN, cpos, 33 + ChunkStatus.getDistance(ChunkStatus.EMPTY), cpos);
 		}
 		if (access instanceof LevelChunk) {
 			source.updateChunkForced(cpos, true);
