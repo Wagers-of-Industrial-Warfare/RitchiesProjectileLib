@@ -42,7 +42,6 @@ public class RitchiesProjectileLib {
      * @param load
      */
     public static void queueForceLoad(ServerLevel level, Entity entity, int chunkX, int chunkZ, boolean load) {
-        if (!level.hasChunk(chunkX, chunkZ)) return;
         ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
         manager.trackForcedChunk(entity, new ChunkPos(chunkX, chunkZ), load);
     }
