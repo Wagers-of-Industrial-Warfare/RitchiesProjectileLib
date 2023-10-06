@@ -79,6 +79,7 @@ public class ChunkManager extends SavedData {
 	public void clearEntity(Entity entity) {
 		this.toUnload.addAll(this.chunks.get(entity.getUUID()));
 		this.chunks.removeAll(entity.getUUID());
+		this.setDirty();
 	}
 
 	public void tick(ServerLevel level) {
@@ -128,6 +129,7 @@ public class ChunkManager extends SavedData {
 			}
 		}
 		this.toUnload.removeAll(unloadCopy);
+		this.setDirty();
 	}
 
 	// Largely modeled after CraftBukkit World#loadChunk and World#unloadChunk
