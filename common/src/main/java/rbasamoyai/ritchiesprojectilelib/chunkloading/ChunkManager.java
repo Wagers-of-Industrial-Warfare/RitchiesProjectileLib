@@ -2,12 +2,18 @@ package rbasamoyai.ritchiesprojectilelib.chunkloading;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
@@ -78,11 +84,12 @@ public class ChunkManager extends SavedData {
 	public void tick(ServerLevel level) {
 		Set<UUID> badEntities = new HashSet<>();
 		Set<Long> badChunks = new HashSet<>();
+		ServerChunkCache source = level.getChunkSource();
+		LongSet vanillaForcedChunks = level.getForcedChunks();
 
 		for (long l : this.loadedPreviously) {
-			ChunkPos cpos = new ChunkPos(l);
-			if (level.hasChunk(cpos.x, cpos.z)) {
-				level.setChunkForced(cpos.x, cpos.z, false);
+			if (!vanillaForcedChunks.contains(l)) {
+				source.updateChunkForced(new ChunkPos(l), false);
 			}
 		}
 		this.loadedPreviously.clear();
@@ -104,13 +111,11 @@ public class ChunkManager extends SavedData {
 					badEntities.add(uuid);
 					continue;
 				}
-				ChunkPos cpos = new ChunkPos(l);
-				if (badChunks.contains(l)) continue;
-				if (!level.hasChunk(cpos.x, cpos.z)) {
+				if (vanillaForcedChunks.contains(l) || badChunks.contains(l)) continue;
+				if (!loadChunkNoGenerate(level, new ChunkPos(l))) {
 					badChunks.add(l);
 					continue;
 				}
-				level.setChunkForced(cpos.x, cpos.z, true);
 				this.loadedPreviously.add(l);
 				if (MAX_ITER != -1 && ++p == MAX_ITER) break;
 			}
@@ -128,12 +133,26 @@ public class ChunkManager extends SavedData {
 			}
 		}
 		for (long l : unloadCopy) {
-			ChunkPos cpos = new ChunkPos(l);
-			if (level.hasChunk(cpos.x, cpos.z)) {
-				level.setChunkForced(cpos.x, cpos.z, false);
+			if (!vanillaForcedChunks.contains(l)) {
+				source.updateChunkForced(new ChunkPos(l), false);
 			}
 		}
 		this.toUnload.removeAll(unloadCopy);
+	}
+
+	// Largely modeled after CraftBukkit World#loadChunk and World#unloadChunk
+
+	private static boolean loadChunkNoGenerate(ServerLevel level, ChunkPos cpos) {
+		ServerChunkCache source = level.getChunkSource();
+		ChunkAccess access = source.getChunk(cpos.x, cpos.z, ChunkStatus.EMPTY, true);
+		if (access instanceof ProtoChunk) {
+			access = source.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, true);
+		}
+		if (access instanceof LevelChunk) {
+			source.updateChunkForced(cpos, true);
+			return true;
+		}
+		return false;
 	}
 
 }
