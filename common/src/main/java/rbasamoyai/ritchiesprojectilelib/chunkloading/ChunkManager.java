@@ -25,6 +25,7 @@ public class ChunkManager extends SavedData {
 	private final SetMultimap<UUID, Long> chunks;
 	private final LinkedList<Long> iterated = new LinkedList<>();
 	private final Set<Long> currentlyLoaded = new HashSet<>();
+	private final Set<Long> toRemove = new HashSet<>();
 
 	public ChunkManager() {
 		this(HashMultimap.create());
@@ -67,21 +68,25 @@ public class ChunkManager extends SavedData {
 			this.setDirty();
 		} else if (!loaded && this.chunks.containsEntry(uuid, l)) {
 			this.chunks.remove(uuid, l);
+			if (!this.chunks.containsValue(l)) this.toRemove.add(l);
 			this.setDirty();
 		}
 	}
 
 	public void clearEntity(Entity entity) {
+		Set<Long> s = new HashSet<>(this.chunks.get(entity.getUUID()));
 		this.chunks.removeAll(entity.getUUID());
+		s.removeAll(this.chunks.values());
+		this.toRemove.addAll(s);
 		this.setDirty();
 	}
 
 	public void expireChunkIfNecessary(ServerLevel level, ChunkPos cpos) {
 		long l = cpos.toLong();
-		if (level.getForcedChunks().contains(l)
-			|| !this.chunks.containsValue(l)
+		if (level.getForcedChunks().contains(l)) return;
+		if (!this.toRemove.contains(l) && (!this.chunks.containsValue(l)
 			|| this.iterated.size() <= this.currentlyLoaded.size()
-			|| this.currentlyLoaded.size() < RPLConfigs.server().maxChunksForceLoaded.get()) return;
+			|| this.currentlyLoaded.size() < RPLConfigs.server().maxChunksForceLoaded.get())) return;
 		this.currentlyLoaded.remove(l);
 		level.getChunkSource().updateChunkForced(cpos, false);
 	}
