@@ -139,8 +139,8 @@ public class ChunkManager extends SavedData {
 		ServerChunkCache source = level.getChunkSource();
 		ChunkAccess access = source.getChunk(cpos.x, cpos.z, ChunkStatus.EMPTY, true);
 		if (access instanceof ProtoChunk) {
-			access = source.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, true);
 			source.removeRegionTicket(TicketType.UNKNOWN, cpos, -11, cpos);
+			access = source.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, true);
 		}
 		if (access instanceof LevelChunk) {
 			source.updateChunkForced(cpos, true);
