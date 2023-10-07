@@ -15,7 +15,7 @@ public class RitchiesProjectileLib {
     public static final String NAME = "Ritchie's Projectile Lib";
     public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
 
-    private static final String CHUNK_MANAGER_ID = MOD_ID + "_chunk_manager";
+    public static final String CHUNK_MANAGER_ID = MOD_ID + "_chunk_manager";
 
     public static void init() {
         RPLNetwork.init();
