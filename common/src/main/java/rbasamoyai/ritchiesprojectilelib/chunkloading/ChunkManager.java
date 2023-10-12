@@ -25,7 +25,6 @@ public class ChunkManager extends SavedData {
 	private final SetMultimap<UUID, Long> chunks;
 	private final LinkedList<Long> iterated = new LinkedList<>();
 	private final Set<Long> currentlyLoaded = new HashSet<>();
-	private final Set<Long> toRemove = new HashSet<>();
 
 	public ChunkManager() {
 		this(HashMultimap.create());
@@ -68,31 +67,28 @@ public class ChunkManager extends SavedData {
 			this.setDirty();
 		} else if (!loaded && this.chunks.containsEntry(uuid, l)) {
 			this.chunks.remove(uuid, l);
-			if (!this.chunks.containsValue(l)) this.toRemove.add(l);
 			this.setDirty();
 		}
 	}
 
 	public void clearEntity(Entity entity) {
-		Set<Long> s = new HashSet<>(this.chunks.get(entity.getUUID()));
 		this.chunks.removeAll(entity.getUUID());
-		s.removeAll(this.chunks.values());
-		this.toRemove.addAll(s);
 		this.setDirty();
 	}
 
 	public void expireChunkIfNecessary(ServerLevel level, ChunkPos cpos) {
 		long l = cpos.toLong();
 		if (level.getForcedChunks().contains(l)) return;
-		if (!this.toRemove.contains(l) && (!this.chunks.containsValue(l)
-			|| this.iterated.size() <= this.currentlyLoaded.size()
-			|| this.currentlyLoaded.size() < RPLConfigs.server().maxChunksForceLoaded.get())) return;
-		this.currentlyLoaded.remove(l);
-		level.getChunkSource().updateChunkForced(cpos, false);
+		if (!this.chunks.containsValue(l)
+			|| this.iterated.size() > this.currentlyLoaded.size() && this.currentlyLoaded.size() >= RPLConfigs.server().maxChunksForceLoaded.get()) {
+			this.currentlyLoaded.remove(l);
+			level.getChunkSource().updateChunkForced(cpos, false);
+		}
 	}
 
 	public void tick(ServerLevel level) {
 		LongSet vanillaForcedChunks = level.getForcedChunks();
+		Set<Long> badChunks = new HashSet<>();
 
 		int MAX_SIZE = RPLConfigs.server().maxChunksForceLoaded.get();
 		int MAX_ITER = 64;
@@ -102,9 +98,12 @@ public class ChunkManager extends SavedData {
 			LinkedList<Long> tempBuf = new LinkedList<>();
 			while ((MAX_SIZE == -1 || p < MAX_SIZE) && !this.iterated.isEmpty() && (MAX_SIZE == -1 || this.currentlyLoaded.size() < MAX_SIZE) && q++ < MAX_ITER) {
 				long l = this.iterated.poll();
-				if (!this.chunks.containsValue(l) || vanillaForcedChunks.contains(l)) continue;
-				if (!this.currentlyLoaded.contains(l)) {
-					if (!loadChunkNoGenerate(level, new ChunkPos(l))) continue;
+				if (!this.chunks.containsValue(l)) continue;
+				if (!vanillaForcedChunks.contains(l) && !this.currentlyLoaded.contains(l)) {
+					if (!loadChunkNoGenerate(level, new ChunkPos(l))) {
+						badChunks.add(l);
+						continue;
+					}
 					this.currentlyLoaded.add(l);
 				}
 				tempBuf.add(l);
@@ -112,6 +111,13 @@ public class ChunkManager extends SavedData {
 			}
 			this.iterated.addAll(tempBuf);
 		}
+
+		for (UUID uuid : this.chunks.keySet()) {
+			for (long l : badChunks) {
+				this.chunks.remove(uuid, l);
+			}
+		}
+
 		this.setDirty();
 	}
 
