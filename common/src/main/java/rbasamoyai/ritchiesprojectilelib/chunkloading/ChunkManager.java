@@ -78,7 +78,7 @@ public class ChunkManager extends SavedData {
 
 	public void expireChunkIfNecessary(ServerLevel level, ChunkPos cpos) {
 		long l = cpos.toLong();
-		if (level.getForcedChunks().contains(l)) return;
+		if (!this.currentlyLoaded.contains(l) || level.getForcedChunks().contains(l)) return;
 		if (!this.chunks.containsValue(l)
 			|| this.iterated.size() > this.currentlyLoaded.size() && this.currentlyLoaded.size() >= RPLConfigs.server().maxChunksForceLoaded.get()) {
 			this.currentlyLoaded.remove(l);
