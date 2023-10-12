@@ -43,7 +43,7 @@ public class RitchiesProjectileLib {
      */
     public static void queueForceLoad(ServerLevel level, Entity entity, int chunkX, int chunkZ, boolean load) {
         ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
-        manager.trackForcedChunk(entity, new ChunkPos(chunkX, chunkZ), load);
+        manager.trackForcedChunk(level, entity, new ChunkPos(chunkX, chunkZ), load);
     }
 
     /**
