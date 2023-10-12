@@ -58,7 +58,7 @@ public class ChunkManager extends SavedData {
 		return compoundTag;
 	}
 
-	public void trackForcedChunk(Entity entity, ChunkPos pos, boolean loaded) {
+	public void trackForcedChunk(ServerLevel level, Entity entity, ChunkPos pos, boolean loaded) {
 		long l = pos.toLong();
 		UUID uuid = entity.getUUID();
 		if (loaded && !entity.isRemoved() && !this.chunks.containsEntry(uuid, l)) {
@@ -67,6 +67,7 @@ public class ChunkManager extends SavedData {
 			this.setDirty();
 		} else if (!loaded && this.chunks.containsEntry(uuid, l)) {
 			this.chunks.remove(uuid, l);
+			this.expireChunkIfNecessary(level, pos);
 			this.setDirty();
 		}
 	}
