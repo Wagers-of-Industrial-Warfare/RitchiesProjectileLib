@@ -15,7 +15,7 @@ public class RitchiesProjectileLib {
     public static final String NAME = "Ritchie's Projectile Lib";
     public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
 
-    private static final String CHUNK_MANAGER_ID = MOD_ID + "_chunk_manager";
+    public static final String CHUNK_MANAGER_ID = MOD_ID + "_chunk_manager";
 
     public static void init() {
         RPLNetwork.init();
@@ -42,9 +42,8 @@ public class RitchiesProjectileLib {
      * @param load
      */
     public static void queueForceLoad(ServerLevel level, Entity entity, int chunkX, int chunkZ, boolean load) {
-        if (!level.hasChunk(chunkX, chunkZ)) return;
         ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
-        manager.trackForcedChunk(entity, new ChunkPos(chunkX, chunkZ), load);
+        manager.trackForcedChunk(level, entity, new ChunkPos(chunkX, chunkZ), load);
     }
 
     /**
