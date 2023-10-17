@@ -29,6 +29,15 @@
     "minecraft": "${minecraft_version}",
     "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": ">=${fabric_api_version}",
-    "porting_lib": ">=${porting_lib_version}"
+
+    "porting_lib_accessors": ">=${porting_lib_version}",
+    "porting_lib_base": ">=${porting_lib_version}",
+    "porting_lib_entity": ">=${porting_lib_version}",
+    "porting_lib_extensions": ">=${porting_lib_version}",
+    "porting_lib_fake_players": ">=${porting_lib_version}",
+    "porting_lib_networking": ">=${porting_lib_version}",
+    "porting_lib_obj_loader": ">=${porting_lib_version}",
+    "porting_lib_transfer": ">=${porting_lib_version}",
+    "forge_tags": ">=${porting_lib_tags_version}"
   }
 }
