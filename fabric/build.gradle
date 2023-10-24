@@ -54,8 +54,7 @@ processResources {
             "fabric_loader_version", fabric_loader_version,
             "fabric_api_version", fabric_api_version,
             "minecraft_version", minecraft_version,
-            "porting_lib_version", porting_lib_version,
-            "porting_lib_tags_version", porting_lib_tags_version
+            "porting_lib_version", porting_lib_version
     )
     properties.forEach((k, v) -> inputs.property(k, v))
 
