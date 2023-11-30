@@ -41,7 +41,7 @@ dependencies {
     modRuntimeOnly("me.djtheredstoner:DevAuth-fabric:${devauth_fabric_version}")
 
     for (String module in porting_lib_modules.split(",")) {
-        modApi(include("io.github.fabricators_of_create.Porting-Lib:$module:${porting_lib_version}+${minecraft_version}"))
+        modApi(include("io.github.fabricators_of_create.Porting-Lib:$module:${porting_lib_version}+${minecraft_version}")) { exclude module: "loot" }
     }
     modApi(include("curse.maven:forge-config-api-port-fabric-547434:${config_api_id}"))
     modApi(include("com.electronwill.night-config:core:${night_config_version}"))
