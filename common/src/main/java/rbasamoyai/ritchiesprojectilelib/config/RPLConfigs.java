@@ -18,7 +18,7 @@ public class RPLConfigs {
 					.comment("The maximum amount of chunks forced to load during a single tick. Set to -1 to force load unlimited chunks.")
 					.translation("ritchiesprojectilelib.configgui.maxChunksForceLoaded")
 					.worldRestart()
-					.defineInRange("maxChunksForceLoaded", 64, -1, Integer.MAX_VALUE);
+					.defineInRange("maxChunksForceLoaded", 64, 0, 1024);
 
 			builder.pop();
 		}

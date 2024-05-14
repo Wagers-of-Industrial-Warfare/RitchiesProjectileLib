@@ -3,7 +3,6 @@ package rbasamoyai.ritchiesprojectilelib;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,28 +32,15 @@ public class RitchiesProjectileLib {
     }
 
     /**
-     * Remove or queue a chunk for force loading.
+     * Queue a chunk for force loading.
      *
      * @param level
-     * @param entity
      * @param chunkX
      * @param chunkZ
-     * @param load
      */
-    public static void queueForceLoad(ServerLevel level, Entity entity, int chunkX, int chunkZ, boolean load) {
+    public static void queueForceLoad(ServerLevel level, int chunkX, int chunkZ) {
         ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
-        manager.trackForcedChunk(level, entity, new ChunkPos(chunkX, chunkZ), load);
-    }
-
-    /**
-     * Mark all chunks loaded by an entity as no longer force loaded. Use when the entity is removed, e.g. killed, change dimension.
-     *
-     * @param level
-     * @param entity
-     */
-    public static void removeAllForceLoaded(ServerLevel level, Entity entity) {
-        ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
-        manager.clearEntity(entity);
+        manager.queueForceLoad(new ChunkPos(chunkX, chunkZ));
     }
 
 }

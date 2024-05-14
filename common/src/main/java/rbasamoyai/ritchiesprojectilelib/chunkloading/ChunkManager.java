@@ -1,15 +1,13 @@
 package rbasamoyai.ritchiesprojectilelib.chunkloading;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkStatus;
@@ -18,106 +16,96 @@ import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
-import java.util.*;
+import java.util.Map;
 
 public class ChunkManager extends SavedData {
 
-	private final SetMultimap<UUID, Long> chunks;
-	private final LinkedList<Long> iterated = new LinkedList<>();
-	private final Set<Long> currentlyLoaded = new HashSet<>();
+	private final LongOpenHashSet chunks;
+	private final LongArrayFIFOQueue queue = new LongArrayFIFOQueue();
+	private final LongOpenHashSet inQueue = new LongOpenHashSet();
+	private final Long2IntOpenHashMap loaded = new Long2IntOpenHashMap();
 
-	public ChunkManager() {
-		this(HashMultimap.create());
-	}
+	public ChunkManager() { this(new LongOpenHashSet()); }
 
-	private ChunkManager(SetMultimap<UUID, Long> map) {
-		this.chunks = map;
-		this.iterated.addAll(this.chunks.values());
-	}
+    public ChunkManager(LongOpenHashSet chunks) {
+        this.chunks = chunks;
+    }
 
-	public static ChunkManager load(CompoundTag tag) {
-		SetMultimap<UUID, Long> chunks = HashMultimap.create();
-		ListTag loadedList = tag.getList("LoadedChunks", Tag.TAG_COMPOUND);
-		for (int i = 0; i < loadedList.size(); ++i) {
-			CompoundTag eTag = loadedList.getCompound(i);
-			chunks.put(eTag.getUUID("UUID"), eTag.getLong("ChunkPos"));
-		}
+    public static ChunkManager load(CompoundTag tag) {
+		long[] arr = tag.getLongArray("LoadedChunks");
+		LongOpenHashSet chunks = new LongOpenHashSet(arr);
 		return new ChunkManager(chunks);
 	}
 
 	@Override
 	public CompoundTag save(CompoundTag compoundTag) {
-		ListTag loadedList = new ListTag();
-		for (Map.Entry<UUID, Long> e : this.chunks.entries()) {
-			CompoundTag eTag = new CompoundTag();
-			eTag.putUUID("UUID", e.getKey());
-			eTag.putLong("ChunkPos", e.getValue());
-			loadedList.add(eTag);
-		}
-		compoundTag.put("LoadedChunks", loadedList);
+		compoundTag.putLongArray("LoadedChunks", this.inQueue.toLongArray());
 		return compoundTag;
 	}
 
-	public void trackForcedChunk(ServerLevel level, Entity entity, ChunkPos pos, boolean loaded) {
-		long l = pos.toLong();
-		UUID uuid = entity.getUUID();
-		if (loaded && !entity.isRemoved() && !this.chunks.containsEntry(uuid, l)) {
-			if (!this.chunks.containsValue(l)) this.iterated.add(l);
-			this.chunks.put(uuid, l);
-			this.setDirty();
-		} else if (!loaded && this.chunks.containsEntry(uuid, l)) {
-			this.chunks.remove(uuid, l);
-			this.expireChunkIfNecessary(level, pos);
+	/**
+	 * Use {@link rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib#queueForceLoad(ServerLevel, int, int)}.
+	 */
+	@Deprecated
+	public void queueForceLoad(ChunkPos pos) {
+		long packedPos = pos.toLong();
+		if (this.inQueue.add(packedPos)) {
+			this.queue.enqueue(packedPos);
+			this.chunks.add(packedPos);
 			this.setDirty();
 		}
 	}
 
-	public void clearEntity(Entity entity) {
-		this.chunks.removeAll(entity.getUUID());
-		this.setDirty();
-	}
-
+	/**
+	 * Internal use only.
+	 *
+	 * @param level
+	 * @param cpos
+	 */
+	@Deprecated
 	public void expireChunkIfNecessary(ServerLevel level, ChunkPos cpos) {
-		long l = cpos.toLong();
-		if (!this.currentlyLoaded.contains(l) || level.getForcedChunks().contains(l)) return;
-		if (!this.chunks.containsValue(l)
-			|| this.iterated.size() > this.currentlyLoaded.size() && this.currentlyLoaded.size() >= RPLConfigs.server().maxChunksForceLoaded.get()) {
-			this.currentlyLoaded.remove(l);
+		long packedPos = cpos.toLong();
+		if (!this.loaded.containsKey(packedPos) || level.getForcedChunks().contains(packedPos))
+			return;
+		int tick = this.loaded.get(packedPos);
+		tick = tick <= -1 ? defaultChunkAge() : tick - 1;
+		if (tick == 0)
 			level.getChunkSource().updateChunkForced(cpos, false);
-		}
+		this.loaded.put(packedPos, tick);
 	}
 
 	public void tick(ServerLevel level) {
 		LongSet vanillaForcedChunks = level.getForcedChunks();
-		Set<Long> badChunks = new HashSet<>();
-
 		int MAX_SIZE = RPLConfigs.server().maxChunksForceLoaded.get();
-		int MAX_ITER = 64;
-		if (MAX_SIZE != 0) {
-			int p = 0;
-			int q = 0;
-			LinkedList<Long> tempBuf = new LinkedList<>();
-			while ((MAX_SIZE == -1 || p < MAX_SIZE) && !this.iterated.isEmpty() && (MAX_SIZE == -1 || this.currentlyLoaded.size() < MAX_SIZE) && q++ < MAX_ITER) {
-				long l = this.iterated.poll();
-				if (!this.chunks.containsValue(l)) continue;
-				if (!vanillaForcedChunks.contains(l) && !this.currentlyLoaded.contains(l)) {
-					if (!loadChunkNoGenerate(level, new ChunkPos(l))) {
-						badChunks.add(l);
-						continue;
-					}
-					this.currentlyLoaded.add(l);
-				}
-				tempBuf.add(l);
-				++p;
-			}
-			this.iterated.addAll(tempBuf);
-		}
+		int MAX_CHUNKS_PROCESSED = 32; // TODO: Config?
+		int DEFAULT_AGE = defaultChunkAge();
 
-		for (UUID uuid : this.chunks.keySet()) {
-			for (long l : badChunks) {
-				this.chunks.remove(uuid, l);
+		LongOpenHashSet expired = new LongOpenHashSet();
+		for (Map.Entry<Long, Integer> entry : this.loaded.long2IntEntrySet()) {
+			if (entry.getValue() == 0)
+				expired.add(entry.getKey().longValue());
+		}
+		int freeSlots = Math.max(0, MAX_SIZE - this.loaded.size());
+		int pollCount = Math.min(MAX_CHUNKS_PROCESSED, freeSlots + expired.size());
+		for (int i = 0; i < pollCount; ++i) {
+			long packedPos = this.queue.dequeueLong();
+			this.inQueue.remove(packedPos);
+			if (this.loaded.containsKey(packedPos) && this.loaded.get(packedPos) > -1) {
+				this.loaded.put(packedPos, DEFAULT_AGE);
+				expired.remove(packedPos);
+			} else if (!vanillaForcedChunks.contains(packedPos) && loadChunkNoGenerate(level, new ChunkPos(packedPos))) {
+				this.loaded.put(packedPos, -1);
+			} else {
+				this.chunks.remove(packedPos);
 			}
 		}
+		this.queue.trim();
+
+		for (long packedPos : expired) {
+			if (!this.inQueue.contains(packedPos))
+				this.chunks.remove(packedPos);
+		}
+		this.chunks.trim();
 
 		this.setDirty();
 	}
@@ -136,6 +124,10 @@ public class ChunkManager extends SavedData {
 			return true;
 		}
 		return false;
+	}
+
+	private static int defaultChunkAge() {
+		return 3;
 	}
 
 }
