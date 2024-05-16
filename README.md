@@ -3,8 +3,10 @@
 Code reused in multiple projects by rbasamoyai.
 
 Adds the following features:
-- `PreciseProjectile`, sends more movement and position data to clients.
-- A configurable chunkloading system
+- `#ritchiesprojectilelib:precise_motion`: an entity type tag that sends more detailed movement and position data to clients.
+- A configurable chunkloading system oriented towards modded long-range and fast projectiles.
+  - Unloads forceloaded chunks that are no longer in use
+  - Loads a portion of forceloaded chunks at a time to reduce performance impact while still allowing for many long distance travels.  
 
 ---
 
@@ -59,7 +61,7 @@ __ForgeGradle (1.18.2-1.20.1)__
 ```gradle
 jarJar("com.rbasamoyai:ritchiesprojectilelib:${rpl_version}+${minecraft_version}-forge") {
     transitive = false
-    jarJar.ranged(it, '[1.0.0,1.0.1)') // Change this based on rpl_version. jarJar.pin seems to not work.
+    jarJar.ranged(it, '[2.0.0,2.0.1)') // Change this based on rpl_version. jarJar.pin seems to not work.
 }
 // Same as the previous section
 implementation fg.deobf("com.rbasamoyai:ritchiesprojectilelib:${rpl_version}+${minecraft_version}-forge") { transitive = false }
