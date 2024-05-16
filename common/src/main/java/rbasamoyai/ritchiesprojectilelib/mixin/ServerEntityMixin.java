@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import rbasamoyai.ritchiesprojectilelib.PreciseProjectile;
+import rbasamoyai.ritchiesprojectilelib.RPLTags;
 import rbasamoyai.ritchiesprojectilelib.network.ClientboundPreciseMotionSyncPacket;
 import rbasamoyai.ritchiesprojectilelib.network.RPLNetwork;
 
@@ -20,7 +20,7 @@ public class ServerEntityMixin {
 
 	@Inject(method = "sendChanges", at = @At("HEAD"))
 	private void ritchiesprojectilelib$sendChanges1(CallbackInfo ci) {
-		if (this.entity instanceof PreciseProjectile) {
+		if (this.entity.getType().is(RPLTags.PRECISE_MOTION)) {
 			Vec3 pos = this.entity.position();
 			Vec3 vel = this.entity.getDeltaMovement();
 			RPLNetwork.sendToClientTracking(new ClientboundPreciseMotionSyncPacket(this.entity.getId(), pos.x, pos.y, pos.z, vel.x, vel.y, vel.z, this.entity.getYRot(), this.entity.getXRot(), this.entity.isOnGround(), 3), this.entity);
