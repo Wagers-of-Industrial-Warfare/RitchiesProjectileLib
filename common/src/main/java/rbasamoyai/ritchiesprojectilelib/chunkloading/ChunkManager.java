@@ -62,7 +62,7 @@ public class ChunkManager extends SavedData {
 	public void tick(ServerLevel level) {
 		LongSet vanillaForcedChunks = level.getForcedChunks();
 		int MAX_SIZE = RPLConfigs.server().maxChunksForceLoaded.get();
-		int MAX_CHUNKS_PROCESSED = 32; // TODO: Config?
+		int MAX_CHUNKS_PROCESSED = RPLConfigs.server().maxChunksLoadedEachTick.get();
 		int DEFAULT_AGE = defaultChunkAge();
 
 		LongOpenHashSet expired = new LongOpenHashSet();
@@ -122,7 +122,7 @@ public class ChunkManager extends SavedData {
     }
 
 	private static int defaultChunkAge() {
-		return 3;
+		return RPLConfigs.server().projectileChunkAge.get();
 	}
 
 }

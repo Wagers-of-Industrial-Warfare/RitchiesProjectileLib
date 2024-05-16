@@ -10,6 +10,8 @@ public class RPLConfigs {
 
 	public static class Server {
 		public final ForgeConfigSpec.IntValue maxChunksForceLoaded;
+		public final ForgeConfigSpec.IntValue maxChunksLoadedEachTick;
+		public final ForgeConfigSpec.IntValue projectileChunkAge;
 
 		Server(ForgeConfigSpec.Builder builder) {
 			builder.comment("Server configuration settings for Ritchie's Projectile Library").push("server");
@@ -17,8 +19,17 @@ public class RPLConfigs {
 			maxChunksForceLoaded = builder
 					.comment("The maximum amount of chunks forced to load during a single tick. Set to -1 to force load unlimited chunks.")
 					.translation("ritchiesprojectilelib.configgui.maxChunksForceLoaded")
-					.worldRestart()
 					.defineInRange("maxChunksForceLoaded", 64, 0, 1024);
+
+			maxChunksLoadedEachTick = builder
+					.comment("The maximum amount of chunks that can be processed for loading each tick.")
+					.translation("ritchiesprojectilelib.configgui.maxChunksLoadedEachTick")
+					.defineInRange("maxChunksLoadedEachTick", 32, 1, 256);
+
+			projectileChunkAge = builder
+					.comment("[in Ticks]", "How long chunks loaded by this mod last for before being unloaded.")
+					.translation("ritchiesprojectilelib.configgui.projectileChunkAge")
+					.defineInRange("projectileChunkAge", 3, 1, 20);
 
 			builder.pop();
 		}
