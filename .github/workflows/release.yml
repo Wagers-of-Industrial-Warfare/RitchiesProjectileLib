@@ -24,7 +24,7 @@ jobs:
 
       - name: Get mod version
         id: get_mod_version
-        run: echo "version=$(git describe --tags --abbrev=0 | grep -oP '(?<=v)\d+\.\d+\.\d+(?=\+)')" >> $GITHUB_OUTPUT
+        run: echo "version=$(git describe --tags --abbrev=0 | grep -oP '(?<=v)\d+\.\d+\.\d+(?:-\w+)?(?=\+)')" >> $GITHUB_OUTPUT
 
       - name: Get MC version
         uses: christian-draeger/read-properties@908f99d3334be3802ec7cb528395a69d19914e7b
