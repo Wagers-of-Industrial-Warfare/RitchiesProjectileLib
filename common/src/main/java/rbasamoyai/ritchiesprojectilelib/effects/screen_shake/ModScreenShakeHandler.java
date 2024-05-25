@@ -1,7 +1,7 @@
 package rbasamoyai.ritchiesprojectilelib.effects.screen_shake;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
@@ -18,14 +18,15 @@ public interface ModScreenShakeHandler {
     void applyEffects(ScreenShakeContext context);
 
     class Impl implements ModScreenShakeHandler {
-        private final List<ScreenShakeEffect> activeEffects = new LinkedList<>();
+        private final Map<ScreenShakeEffect, Integer> activeEffects = new LinkedHashMap<>();
 
-        public final PerlinSimplexNoise yawNoise;
-        public final PerlinSimplexNoise pitchNoise;
-        public final PerlinSimplexNoise rollNoise;
+        protected final PerlinSimplexNoise yawNoise;
+        protected final PerlinSimplexNoise pitchNoise;
+        protected final PerlinSimplexNoise rollNoise;
+        private final Random seedGenerator = new Random();
 
         public Impl() {
-            long seed = new Random().nextLong();
+            long seed = this.seedGenerator.nextLong();
             this.yawNoise = new PerlinSimplexNoise(new LegacyRandomSource(seed), ImmutableList.of(-2, -1, 0));
             this.pitchNoise = new PerlinSimplexNoise(new LegacyRandomSource(seed + 1), ImmutableList.of(-2, -1, 0));
             this.rollNoise = new PerlinSimplexNoise(new LegacyRandomSource(seed + 2), ImmutableList.of(-2, -1, 0));
@@ -33,7 +34,7 @@ public interface ModScreenShakeHandler {
 
         @Override
         public void tick(Minecraft minecraft) {
-            this.activeEffects.removeIf(ScreenShakeEffect::tick);
+            this.activeEffects.entrySet().removeIf(entry -> entry.getKey().tick());
         }
 
         @Override
@@ -42,21 +43,22 @@ public interface ModScreenShakeHandler {
             float deltaYaw = 0;
             float deltaPitch = 0;
             float deltaRoll = 0;
-            for (ScreenShakeEffect effect : this.activeEffects) {
-                ScreenShakeEffect modified = this.modifyScreenShake(effect);
+            for (Map.Entry<ScreenShakeEffect, Integer> effect : this.activeEffects.entrySet()) {
+                ScreenShakeEffect modified = this.modifyScreenShake(effect.getKey());
                 float f = modified.getProgressNormalized(partialTicks);
                 float decay = f * f;
-                float offset = modified.getProgress(partialTicks);
-                deltaYaw += modified.yawMagnitude * decay * (float) this.yawNoise.getValue(0, offset, false);
-                deltaPitch += modified.pitchMagnitude * decay * (float) this.pitchNoise.getValue(0, offset, false);
-                deltaRoll += modified.rollMagnitude * decay * (float) this.rollNoise.getValue(0, offset, false);
+                double base = effect.getValue();
+                double offset = modified.getProgress(partialTicks);
+                deltaYaw += modified.yawMagnitude * decay * (float) this.yawNoise.getValue(0, offset * modified.yawJitter + base, false);
+                deltaPitch += modified.pitchMagnitude * decay * (float) this.pitchNoise.getValue(0, offset * modified.pitchJitter + base, false);
+                deltaRoll += modified.rollMagnitude * decay * (float) this.rollNoise.getValue(0, offset * modified.rollJitter + base, false);
             }
             context.setDeltaYaw(context.getDeltaYaw() + deltaYaw);
             context.setDeltaPitch(context.getDeltaPitch() + deltaPitch);
             context.setDeltaRoll(context.getDeltaRoll() + deltaRoll);
         }
 
-        @Override public void addEffect(ScreenShakeEffect effect) { this.activeEffects.add(effect); }
+        @Override public void addEffect(ScreenShakeEffect effect) { this.activeEffects.put(effect, this.seedGenerator.nextInt(65536)); }
         @Override public void clearEffects() { this.activeEffects.clear(); }
 
         public ScreenShakeEffect modifyScreenShake(ScreenShakeEffect effect) {

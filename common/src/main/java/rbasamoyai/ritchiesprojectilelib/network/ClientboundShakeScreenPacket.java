@@ -15,7 +15,7 @@ public record ClientboundShakeScreenPacket(@Nullable ResourceLocation modHandler
 
     public ClientboundShakeScreenPacket(FriendlyByteBuf buf) {
         this(buf.readBoolean() ? buf.readResourceLocation() : null, new ScreenShakeEffect(buf.readVarInt(), buf.readFloat(),
-            buf.readFloat(), buf.readFloat()));
+            buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat()));
     }
 
     public ClientboundShakeScreenPacket(ScreenShakeEffect effect) {
@@ -30,7 +30,10 @@ public record ClientboundShakeScreenPacket(@Nullable ResourceLocation modHandler
         buf.writeVarInt(this.effect.duration)
             .writeFloat(this.effect.yawMagnitude)
             .writeFloat(this.effect.pitchMagnitude)
-            .writeFloat(this.effect.rollMagnitude);
+            .writeFloat(this.effect.rollMagnitude)
+            .writeFloat(this.effect.yawJitter)
+            .writeFloat(this.effect.pitchJitter)
+            .writeFloat(this.effect.rollJitter);
     }
 
     @Override
