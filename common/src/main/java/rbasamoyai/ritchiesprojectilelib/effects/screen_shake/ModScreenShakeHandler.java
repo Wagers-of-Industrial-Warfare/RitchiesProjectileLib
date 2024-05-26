@@ -46,9 +46,9 @@ public interface ModScreenShakeHandler {
             float deltaRoll = 0;
             for (Map.Entry<ScreenShakeEffect, Integer> effect : this.activeEffects.entrySet()) {
                 ScreenShakeEffect modified = this.modifyScreenShake(effect.getKey());
-                float f = modified.getProgressNormalized(partialTicks);
+                float f = Mth.clamp(modified.getProgressNormalized(partialTicks), 0, 1);
                 float f1 = Mth.cos(f * Mth.PI);
-                float amplitude = f1 * f1;
+                float amplitude = 1 - f1 * f1;
                 double base = effect.getValue();
                 double offset = modified.getProgress(partialTicks);
                 deltaYaw += modified.yawMagnitude * amplitude * (float) this.yawNoise.getValue(0, offset * modified.yawJitter + base, false);
