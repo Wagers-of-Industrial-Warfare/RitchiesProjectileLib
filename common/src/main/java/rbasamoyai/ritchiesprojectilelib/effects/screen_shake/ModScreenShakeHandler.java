@@ -7,6 +7,7 @@ import java.util.Random;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
@@ -46,12 +47,13 @@ public interface ModScreenShakeHandler {
             for (Map.Entry<ScreenShakeEffect, Integer> effect : this.activeEffects.entrySet()) {
                 ScreenShakeEffect modified = this.modifyScreenShake(effect.getKey());
                 float f = modified.getProgressNormalized(partialTicks);
-                float decay = f * f;
+                float f1 = Mth.cos(f * Mth.PI);
+                float amplitude = f1 * f1;
                 double base = effect.getValue();
                 double offset = modified.getProgress(partialTicks);
-                deltaYaw += modified.yawMagnitude * decay * (float) this.yawNoise.getValue(0, offset * modified.yawJitter + base, false);
-                deltaPitch += modified.pitchMagnitude * decay * (float) this.pitchNoise.getValue(0, offset * modified.pitchJitter + base, false);
-                deltaRoll += modified.rollMagnitude * decay * (float) this.rollNoise.getValue(0, offset * modified.rollJitter + base, false);
+                deltaYaw += modified.yawMagnitude * amplitude * (float) this.yawNoise.getValue(0, offset * modified.yawJitter + base, false);
+                deltaPitch += modified.pitchMagnitude * amplitude * (float) this.pitchNoise.getValue(0, offset * modified.pitchJitter + base, false);
+                deltaRoll += modified.rollMagnitude * amplitude * (float) this.rollNoise.getValue(0, offset * modified.rollJitter + base, false);
             }
             context.setDeltaYaw(context.getDeltaYaw() + deltaYaw);
             context.setDeltaPitch(context.getDeltaPitch() + deltaPitch);

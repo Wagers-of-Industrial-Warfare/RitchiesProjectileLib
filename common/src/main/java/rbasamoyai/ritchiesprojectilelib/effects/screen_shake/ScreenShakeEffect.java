@@ -34,7 +34,7 @@ public class ScreenShakeEffect {
         return this.timer < 1;
     }
 
-    public float getProgress(float partialTicks) { return this.timer - partialTicks; }
+    public float getProgress(float partialTicks) { return this.timer + partialTicks; }
     public float getProgressNormalized(float partialTicks) { return this.duration < 1 ? 0 : this.getProgress(partialTicks) / this.duration; }
 
     public ScreenShakeEffect copyWithProgressAndDuration(float yawMagnitude, float pitchMagnitude, float rollMagnitude,
