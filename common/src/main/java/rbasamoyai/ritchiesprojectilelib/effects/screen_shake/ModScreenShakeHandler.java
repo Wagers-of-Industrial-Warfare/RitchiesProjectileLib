@@ -81,9 +81,9 @@ public interface ModScreenShakeHandler {
 
         protected void immediatelyAddEffect(ScreenShakeEffect effect) {
             ScreenShakeEffect modified = this.modifyScreenShake(effect);
-            double dy = modified.yawMagnitude * (this.random.nextDouble() + this.random.nextDouble()) * 0.5d;
-            double dp = modified.pitchMagnitude * (this.random.nextDouble() + this.random.nextDouble()) * 0.5d;
-            double dr = modified.rollMagnitude * (this.random.nextDouble() + this.random.nextDouble()) * 0.5d;
+            double dy = modified.yawMagnitude * (this.random.nextDouble() - this.random.nextDouble()) * 0.5d;
+            double dp = modified.pitchMagnitude * (this.random.nextDouble() - this.random.nextDouble()) * 0.5d;
+            double dr = modified.rollMagnitude * (this.random.nextDouble() - this.random.nextDouble()) * 0.5d;
             this.velocity = this.velocity.add(dy, dp, dr);
         }
 
