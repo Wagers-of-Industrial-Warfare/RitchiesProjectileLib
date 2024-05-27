@@ -1,15 +1,12 @@
 package rbasamoyai.ritchiesprojectilelib.effects.screen_shake;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Random;
-
-import com.google.common.collect.ImmutableList;
+import java.util.Set;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mth;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
+import net.minecraft.world.phys.Vec3;
 
 public interface ModScreenShakeHandler {
 
@@ -19,52 +16,93 @@ public interface ModScreenShakeHandler {
     void applyEffects(ScreenShakeContext context);
 
     class Impl implements ModScreenShakeHandler {
-        private final Map<ScreenShakeEffect, Integer> activeEffects = new LinkedHashMap<>();
+        protected final Set<ScreenShakeEffect> delayedShakes = new LinkedHashSet<>();
+        protected Vec3 velocity = Vec3.ZERO;
+        protected Vec3 acceleration = Vec3.ZERO;
+        protected Vec3 displacement = Vec3.ZERO;
 
-        protected final PerlinSimplexNoise yawNoise;
-        protected final PerlinSimplexNoise pitchNoise;
-        protected final PerlinSimplexNoise rollNoise;
-        private final Random seedGenerator = new Random();
+        protected final Random random = new Random();
 
         public Impl() {
-            long seed = this.seedGenerator.nextLong();
-            this.yawNoise = new PerlinSimplexNoise(new LegacyRandomSource(seed), ImmutableList.of(-2, -1, 0));
-            this.pitchNoise = new PerlinSimplexNoise(new LegacyRandomSource(seed + 1), ImmutableList.of(-2, -1, 0));
-            this.rollNoise = new PerlinSimplexNoise(new LegacyRandomSource(seed + 2), ImmutableList.of(-2, -1, 0));
         }
 
         @Override
         public void tick(Minecraft minecraft) {
-            this.activeEffects.entrySet().removeIf(entry -> entry.getKey().tick());
+            for (Iterator<ScreenShakeEffect> iter = this.delayedShakes.iterator(); iter.hasNext(); ) {
+                ScreenShakeEffect effect = iter.next();
+                if (effect.tick()) {
+                    this.immediatelyAddEffect(effect);
+                    iter.remove();
+                }
+            }
+            int iterations = 10;
+            double dt = (double) 1 / iterations;
+            double restitution = Math.max(0.005d, this.getRestitution());
+            double drag = Math.max(0.005d, this.getDrag());
+            for (int i = 0; i < iterations; ++i) {
+                Vec3 newRotationDisplacement = this.displacement
+                    .add(this.velocity.scale(dt))
+                    .add(this.acceleration.scale(0.5d * dt * dt));
+                Vec3 newAccel = this.displacement.scale(-restitution)
+                    .add(this.velocity.scale(-drag));
+                Vec3 newVel = this.velocity
+                    .add(this.acceleration.add(newAccel).scale(0.5d * dt));
+                this.displacement = newRotationDisplacement;
+                this.velocity = newVel;
+                this.acceleration = newAccel;
+                this.applyConstraints();
+            }
+            if (this.displacement.lengthSqr() < 1e-4d
+                && this.velocity.lengthSqr() < 1e-4d
+                && this.acceleration.lengthSqr() < 1e-4d) {
+                this.clearEffects();
+            }
         }
 
         @Override
         public void applyEffects(ScreenShakeContext context) {
             float partialTicks = context.partialTicks();
-            float deltaYaw = 0;
-            float deltaPitch = 0;
-            float deltaRoll = 0;
-            for (Map.Entry<ScreenShakeEffect, Integer> effect : this.activeEffects.entrySet()) {
-                ScreenShakeEffect modified = this.modifyScreenShake(effect.getKey());
-                float f = Mth.clamp(modified.getProgressNormalized(partialTicks), 0, 1);
-                float f1 = Mth.cos(f * Mth.PI);
-                float amplitude = 1 - f1 * f1;
-                double base = effect.getValue();
-                double offset = modified.getProgress(partialTicks);
-                deltaYaw += modified.yawMagnitude * amplitude * (float) this.yawNoise.getValue(0, offset * modified.yawJitter + base, false);
-                deltaPitch += modified.pitchMagnitude * amplitude * (float) this.pitchNoise.getValue(0, offset * modified.pitchJitter + base, false);
-                deltaRoll += modified.rollMagnitude * amplitude * (float) this.rollNoise.getValue(0, offset * modified.rollJitter + base, false);
-            }
-            context.setDeltaYaw(context.getDeltaYaw() + deltaYaw);
-            context.setDeltaPitch(context.getDeltaPitch() + deltaPitch);
-            context.setDeltaRoll(context.getDeltaRoll() + deltaRoll);
+            Vec3 currentDisp = this.displacement
+                .add(this.velocity.scale(partialTicks))
+                .add(this.acceleration.scale(partialTicks * partialTicks * 0.5));
+            context.setDeltaYaw(context.getDeltaYaw() + (float) currentDisp.x);
+            context.setDeltaPitch(context.getDeltaPitch() + (float) currentDisp.y);
+            context.setDeltaRoll(context.getDeltaRoll() + (float) currentDisp.z);
         }
 
-        @Override public void addEffect(ScreenShakeEffect effect) { this.activeEffects.put(effect, this.seedGenerator.nextInt(65536)); }
-        @Override public void clearEffects() { this.activeEffects.clear(); }
+        @Override
+        public void addEffect(ScreenShakeEffect effect) {
+            if (effect.duration <= 0) {
+                this.immediatelyAddEffect(effect);
+            } else {
+                this.delayedShakes.add(effect);
+            }
+        }
 
-        public ScreenShakeEffect modifyScreenShake(ScreenShakeEffect effect) {
+        protected void immediatelyAddEffect(ScreenShakeEffect effect) {
+            ScreenShakeEffect modified = this.modifyScreenShake(effect);
+            double dy = modified.yawMagnitude * (this.random.nextDouble() + this.random.nextDouble()) * 0.5d;
+            double dp = modified.pitchMagnitude * (this.random.nextDouble() + this.random.nextDouble()) * 0.5d;
+            double dr = modified.rollMagnitude * (this.random.nextDouble() + this.random.nextDouble()) * 0.5d;
+            this.velocity = this.velocity.add(dy, dp, dr);
+        }
+
+        @Override
+        public void clearEffects() {
+            this.displacement = Vec3.ZERO;
+            this.velocity = Vec3.ZERO;
+            this.acceleration = Vec3.ZERO;
+        }
+
+        protected ScreenShakeEffect modifyScreenShake(ScreenShakeEffect effect) {
             return effect;
+        }
+
+        protected double getRestitution() { return 0.1; }
+        protected double getDrag() { return 0.2d; }
+
+        protected void applyConstraints() {
+
         }
     }
 
