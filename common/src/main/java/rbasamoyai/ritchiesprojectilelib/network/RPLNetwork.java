@@ -17,13 +17,14 @@ public class RPLNetwork {
 	private static final Int2ObjectMap<Function<FriendlyByteBuf, ? extends RootPacket>> ID_TO_CONSTRUCTOR = new Int2ObjectOpenHashMap<>();
 	private static final Object2IntMap<Class<? extends RootPacket>> TYPE_TO_ID = new Object2IntOpenHashMap<>();
 
-	public static final String VERSION = "1.0.0";
+	public static final String VERSION = "2.0.0";
 
 	public static void init() {
 		int id = 0;
 		addMsg(id++, ClientboundCheckChannelVersionPacket.class, ClientboundCheckChannelVersionPacket::new);
 		addMsg(id++, ClientboundPreciseMotionSyncPacket.class, ClientboundPreciseMotionSyncPacket::new);
 		addMsg(id++, ClientboundShakeScreenPacket.class, ClientboundShakeScreenPacket::new);
+        addMsg(id++, ClientboundSyncBurstSubProjectilesPacket.class, ClientboundSyncBurstSubProjectilesPacket::decode);
 
 		sidedInit();
 	}

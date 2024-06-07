@@ -3,7 +3,9 @@ package rbasamoyai.ritchiesprojectilelib.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.Entity;
+import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
 import rbasamoyai.ritchiesprojectilelib.effects.screen_shake.RPLScreenShakeHandlerClient;
+import rbasamoyai.ritchiesprojectilelib.projectile_burst.ProjectileBurst;
 
 public class RPLClientHandlers {
 
@@ -33,6 +35,18 @@ public class RPLClientHandlers {
             RPLScreenShakeHandlerClient.addShakeEffect(packet.effect());
         } else {
             RPLScreenShakeHandlerClient.addShakeEffect(packet.modHandlerId(), packet.effect());
+        }
+    }
+
+    public static void addBurstSubProjectileData(ClientboundSyncBurstSubProjectilesPacket pkt) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null)
+            return;
+        Entity entity = mc.level.getEntity(pkt.entityId());
+        if (entity instanceof ProjectileBurst burst) {
+            burst.updateClientData(pkt.age(), pkt.subProjectiles());
+        } else {
+            RitchiesProjectileLib.LOGGER.error("Invalid ClientboundSyncBurstSubProjectilesPacket for non-projectile burst entity: " + entity);
         }
     }
 

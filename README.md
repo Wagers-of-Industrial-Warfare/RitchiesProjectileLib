@@ -12,6 +12,9 @@ Adds the following features:
     impact while still allowing for many long distance projectiles
 - Screen shake effect for mods, particularly those focused on firearms and
   artillery
+- Projectile bursts, for effective simulation of things like fragmentation
+  explosions, shotgun pellets, and shrapnel shells without having to rely on
+  large amounts of entities
 
 ---
 
