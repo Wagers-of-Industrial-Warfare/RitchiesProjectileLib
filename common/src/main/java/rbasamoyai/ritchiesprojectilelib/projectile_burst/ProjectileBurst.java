@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -146,8 +145,6 @@ public abstract class ProjectileBurst extends Projectile {
         BlockState blockState = this.level.getBlockState(result.getBlockPos());
         blockState.onProjectileHit(this.level, blockState, result, this);
 	}
-
-	protected abstract DamageSource getDamageSource();
 
 	public record SubProjectile(double[] displacement, double[] velocity) {
 		public CompoundTag toTag() {
