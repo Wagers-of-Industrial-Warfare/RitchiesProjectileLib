@@ -32,7 +32,7 @@ public abstract class ProjectileBurst extends Projectile {
 	protected int age = 0;
 	protected final List<SubProjectile> subProjectiles = new LinkedList<>();
 
-	protected ProjectileBurst(EntityType<? extends Projectile> entityType, Level level) { super(entityType, level); }
+	protected ProjectileBurst(EntityType<? extends ProjectileBurst> entityType, Level level) { super(entityType, level); }
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag tag) {
