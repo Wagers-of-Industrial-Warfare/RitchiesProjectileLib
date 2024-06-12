@@ -104,7 +104,8 @@ public abstract class ProjectileBurst extends Projectile {
 			end = hitResult.getLocation();
 		AABB aabb = new AABB(start.x - halfWidth, start.y - halfHeight, start.z - halfWidth, start.x + halfWidth,
 			start.y + halfHeight, start.z + halfWidth);
-		HitResult hitResult2 = getEntityHitResult(this.level, this, start, end, aabb.expandTowards(vel).inflate(1.0), this::canHitEntity);
+		HitResult hitResult2 = getEntityHitResult(this.level, this, start, end, aabb.expandTowards(vel).inflate(1.0),
+            this::canHitEntity, (float) halfWidth);
 		if (hitResult2 != null)
 			hitResult = hitResult2;
 		return hitResult;
