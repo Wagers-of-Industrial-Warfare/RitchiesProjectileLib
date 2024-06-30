@@ -11,9 +11,12 @@ public class ScreenShakeEffect {
     public final float yawJitter;
     public final float pitchJitter;
     public final float rollJitter;
+    public final double posX;
+    public final double posY;
+    public final double posZ;
 
     public ScreenShakeEffect(int duration, float yawMagnitude, float pitchMagnitude, float rollMagnitude,
-                             float yawJitter, float pitchJitter, float rollJitter) {
+                             float yawJitter, float pitchJitter, float rollJitter, double posX, double posY, double posZ) {
         this.duration = duration;
         this.timer = duration;
         this.yawMagnitude = yawMagnitude;
@@ -22,10 +25,13 @@ public class ScreenShakeEffect {
         this.yawJitter = yawJitter;
         this.pitchJitter = pitchJitter;
         this.rollJitter = rollJitter;
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
     }
 
-    public ScreenShakeEffect(int duration, float rotationMagnitude, float jitter) {
-        this(duration, rotationMagnitude, rotationMagnitude, rotationMagnitude, jitter, jitter, jitter);
+    public ScreenShakeEffect(int duration, float rotationMagnitude, float jitter, double posX, double posY, double posZ) {
+        this(duration, rotationMagnitude, rotationMagnitude, rotationMagnitude, jitter, jitter, jitter, posZ, posY, posX);
     }
 
     public boolean tick() {
@@ -38,9 +44,10 @@ public class ScreenShakeEffect {
     public float getProgressNormalized(float partialTicks) { return this.duration < 1 ? 0 : this.getProgress(partialTicks) / this.duration; }
 
     public ScreenShakeEffect copyWithProgressAndDuration(float yawMagnitude, float pitchMagnitude, float rollMagnitude,
-                                                         float yawJitter, float pitchJitter, float rollJitter) {
+                                                         float yawJitter, float pitchJitter, float rollJitter, float posX,
+                                                         float posY, float posZ) {
         ScreenShakeEffect newEffect = new ScreenShakeEffect(this.duration, yawMagnitude, pitchMagnitude, rollMagnitude,
-            yawJitter, pitchJitter, rollJitter);
+            yawJitter, pitchJitter, rollJitter, posX, posY, posZ);
         newEffect.timer = this.timer;
         return newEffect;
     }
