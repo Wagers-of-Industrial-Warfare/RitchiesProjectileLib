@@ -82,7 +82,7 @@ public abstract class ProjectileBurst extends Projectile {
 			subProjectile.displacement[0] += subProjectile.velocity[0];
 			subProjectile.displacement[1] += subProjectile.velocity[1];
 			subProjectile.displacement[2] += subProjectile.velocity[2];
-            this.applyForces(subProjectile.velocity);
+            this.applyForces(subProjectile.velocity, subProjectile.displacement);
 		}
 		super.tick();
 		if (++this.age >= this.getLifetime())
@@ -90,7 +90,7 @@ public abstract class ProjectileBurst extends Projectile {
 	}
 
     protected abstract int getLifetime();
-    protected abstract void applyForces(double[] velocity);
+    protected abstract void applyForces(double[] velocity, double[] displacement);
 
 	protected HitResult clipAndDamage(SubProjectile info) {
 		Vec3 vel = new Vec3(info.velocity[0], info.velocity[1], info.velocity[2]);
