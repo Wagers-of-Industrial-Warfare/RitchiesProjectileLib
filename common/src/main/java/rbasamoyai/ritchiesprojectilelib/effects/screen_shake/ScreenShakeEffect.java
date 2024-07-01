@@ -44,8 +44,8 @@ public class ScreenShakeEffect {
     public float getProgressNormalized(float partialTicks) { return this.duration < 1 ? 0 : this.getProgress(partialTicks) / this.duration; }
 
     public ScreenShakeEffect copyWithProgressAndDuration(float yawMagnitude, float pitchMagnitude, float rollMagnitude,
-                                                         float yawJitter, float pitchJitter, float rollJitter, float posX,
-                                                         float posY, float posZ) {
+                                                         float yawJitter, float pitchJitter, float rollJitter, double posX,
+                                                         double posY, double posZ) {
         ScreenShakeEffect newEffect = new ScreenShakeEffect(this.duration, yawMagnitude, pitchMagnitude, rollMagnitude,
             yawJitter, pitchJitter, rollJitter, posX, posY, posZ);
         newEffect.timer = this.timer;
