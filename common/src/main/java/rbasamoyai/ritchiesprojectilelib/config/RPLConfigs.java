@@ -1,10 +1,11 @@
 package rbasamoyai.ritchiesprojectilelib.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import java.util.function.BiConsumer;
+
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.function.BiConsumer;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
 
 public class RPLConfigs {
 
@@ -12,14 +13,15 @@ public class RPLConfigs {
 		public final ForgeConfigSpec.IntValue maxChunksForceLoaded;
 		public final ForgeConfigSpec.IntValue maxChunksLoadedEachTick;
 		public final ForgeConfigSpec.IntValue projectileChunkAge;
+        public final ForgeConfigSpec.IntValue entityLoadTimeout;
 
 		Server(ForgeConfigSpec.Builder builder) {
 			builder.comment("Server configuration settings for Ritchie's Projectile Library").push("server");
 
 			maxChunksForceLoaded = builder
-					.comment("The maximum amount of chunks forced to load during a single tick. Set to -1 to force load unlimited chunks.")
+					.comment("The maximum amount of chunks forced to load during a single tick. Set to 0 to force load unlimited chunks.")
 					.translation("ritchiesprojectilelib.configgui.maxChunksForceLoaded")
-					.defineInRange("maxChunksForceLoaded", 64, 0, 1024);
+					.defineInRange("maxChunksForceLoaded", 64, 0, Integer.MAX_VALUE);
 
 			maxChunksLoadedEachTick = builder
 					.comment("The maximum amount of chunks that can be processed for loading each tick.")
@@ -30,6 +32,11 @@ public class RPLConfigs {
 					.comment("[in Ticks]", "How long chunks loaded by this mod last for before being unloaded.")
 					.translation("ritchiesprojectilelib.configgui.projectileChunkAge")
 					.defineInRange("projectileChunkAge", 3, 1, 20);
+
+            entityLoadTimeout = builder
+                    .comment("[in Ticks]", "How long chunks loaded by this mod last for before being unloaded if they have not yet loaded entities.")
+                    .translation("ritchiesprojectilelib.configgui.entityLoadTimeout")
+                    .defineInRange("entityLoadTimeout", 10, 1, 200);
 
 			builder.pop();
 		}

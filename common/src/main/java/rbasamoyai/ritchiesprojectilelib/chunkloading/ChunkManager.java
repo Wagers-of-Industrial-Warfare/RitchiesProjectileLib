@@ -1,9 +1,13 @@
 package rbasamoyai.ritchiesprojectilelib.chunkloading;
 
+import java.util.Map;
+
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
@@ -15,8 +19,6 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
-
-import java.util.Map;
 
 public class ChunkManager extends SavedData {
 
@@ -42,7 +44,7 @@ public class ChunkManager extends SavedData {
 
 	@Override
 	public CompoundTag save(CompoundTag compoundTag) {
-		compoundTag.putLongArray("LoadedChunks", this.inQueue.toLongArray());
+		compoundTag.putLongArray("LoadedChunks", this.chunks.toLongArray());
 		return compoundTag;
 	}
 
@@ -62,15 +64,26 @@ public class ChunkManager extends SavedData {
 	public void tick(ServerLevel level) {
 		LongSet vanillaForcedChunks = level.getForcedChunks();
 		int MAX_SIZE = RPLConfigs.server().maxChunksForceLoaded.get();
+        if (MAX_SIZE <= 0)
+            MAX_SIZE = Integer.MAX_VALUE;
 		int MAX_CHUNKS_PROCESSED = RPLConfigs.server().maxChunksLoadedEachTick.get();
-		int DEFAULT_AGE = defaultChunkAge();
+		int DEFAULT_AGE = RPLConfigs.server().projectileChunkAge.get();
+        int ENTITY_LOAD_TIMEOUT_AGE = -RPLConfigs.server().entityLoadTimeout.get() - 1;
 
 		LongOpenHashSet expired = new LongOpenHashSet();
 		for (Map.Entry<Long, Integer> entry : this.loaded.long2IntEntrySet()) {
 			long packedPos = entry.getKey();
-			int newAge = entry.getValue() - 1;
+            int age = entry.getValue();
+            if (age <= -1) {
+                // Inefficient but less accessor boilerplate
+                ChunkPos cpos = new ChunkPos(packedPos);
+                BlockPos bpos = new BlockPos(SectionPos.sectionToBlockCoord(cpos.x), 0, SectionPos.sectionToBlockCoord(cpos.z));
+                if (level.isPositionEntityTicking(bpos))
+                    age = DEFAULT_AGE;
+            }
+            int newAge = age - 1;
 			entry.setValue(newAge);
-			if (newAge <= 0)
+			if (newAge == 0 || newAge <= ENTITY_LOAD_TIMEOUT_AGE)
 				expired.add(packedPos);
 		}
 
@@ -87,12 +100,13 @@ public class ChunkManager extends SavedData {
 				this.loaded.put(packedPos, DEFAULT_AGE);
 				expired.remove(packedPos);
 			} else if (!vanillaForcedChunks.contains(packedPos) && loadChunkNoGenerate(level, chunkPos)) {
-				this.loaded.put(packedPos, DEFAULT_AGE);
+				this.loaded.put(packedPos, -1);
 				level.getChunkSource().updateChunkForced(chunkPos, true);
 			} else {
 				this.chunks.remove(packedPos);
 			}
 		}
+
 		for (long packedPos : expired) {
 			level.getChunkSource().updateChunkForced(new ChunkPos(packedPos), false);
 			this.loaded.remove(packedPos);
@@ -120,9 +134,5 @@ public class ChunkManager extends SavedData {
 		}
         return access instanceof LevelChunk;
     }
-
-	private static int defaultChunkAge() {
-		return RPLConfigs.server().projectileChunkAge.get();
-	}
 
 }
