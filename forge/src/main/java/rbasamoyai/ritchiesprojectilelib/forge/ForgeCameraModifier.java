@@ -1,13 +1,13 @@
 package rbasamoyai.ritchiesprojectilelib.forge;
 
-import net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup;
+import net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles;
 import rbasamoyai.ritchiesprojectilelib.effects.CameraModifier;
 
 public class ForgeCameraModifier implements CameraModifier {
 
-    private final CameraSetup cameraSetup;
+    private final ComputeCameraAngles cameraSetup;
 
-    public ForgeCameraModifier(CameraSetup cameraSetup) {
+    public ForgeCameraModifier(ComputeCameraAngles cameraSetup) {
         this.cameraSetup = cameraSetup;
     }
 

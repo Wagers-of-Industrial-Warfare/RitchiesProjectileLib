@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
@@ -134,7 +133,7 @@ public abstract class ProjectileBurst extends Projectile {
 			this.onSubProjectileHitBlock((BlockHitResult) result, subProjectile);
 		}
 		if (type != HitResult.Type.MISS) {
-			this.gameEvent(GameEvent.PROJECTILE_LAND, null, new BlockPos(subProjectile.displacement[0] + this.getX(),
+			this.level.gameEvent(this, GameEvent.PROJECTILE_LAND, new Vec3(subProjectile.displacement[0] + this.getX(),
 				subProjectile.displacement[1] + this.getY(), subProjectile.displacement[2] + this.getZ()));
 		}
 	}

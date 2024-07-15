@@ -1,7 +1,7 @@
 package rbasamoyai.ritchiesprojectilelib.forge;
 
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -25,14 +25,14 @@ public class RPLForgeClient {
         }
     }
 
-    public static void onCameraSetup(final EntityViewRenderEvent.CameraSetup event) {
-        if (RPLClient.onCameraSetup(event.getCamera(), (float) event.getPartialTicks(), new ForgeCameraModifier(event)) && event.isCancelable()) {
+    public static void onCameraSetup(final ViewportEvent.ComputeCameraAngles event) {
+        if (RPLClient.onCameraSetup(event.getCamera(), (float) event.getPartialTick(), new ForgeCameraModifier(event)) && event.isCancelable()) {
             event.setCanceled(true);
         }
     }
 
     public static void onPlayerLogOut(final PlayerEvent.PlayerLoggedOutEvent event) {
-        RPLClient.onPlayerLogout(event.getPlayer());
+        RPLClient.onPlayerLogout(event.getEntity());
     }
 
 }
