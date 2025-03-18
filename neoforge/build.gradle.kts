@@ -20,7 +20,7 @@ base.archivesName = mod.id
 
 architectury {
 	platformSetupLoomIde()
-	forge()
+	neoForge()
 }
 
 val commonBundle: Configuration by configurations.creating {
@@ -36,23 +36,21 @@ val shadowBundle: Configuration by configurations.creating {
 configurations {
 	compileClasspath.get().extendsFrom(commonBundle)
 	runtimeClasspath.get().extendsFrom(commonBundle)
-	get("developmentForge").extendsFrom(commonBundle)
+	get("developmentNeoForge").extendsFrom(commonBundle)
 }
 
 loom {
 	silentMojangMappingsLicense()
 	accessWidenerPath = common.loom.accessWidenerPath
-	forge.convertAccessWideners = true
-	forge.mixinConfigs(
-		"${mod.id}-common.mixins.json",
-		"${mod.id}.mixins.json",
-	)
-
 	runConfigs.all {
 		isIdeConfigGenerated = true
 		runDir = "../../../run"
 		vmArgs("-Dmixin.debug.export=true")
 	}
+}
+
+repositories {
+    maven("https://maven.neoforged.net/releases/") //todo: maybe strictMaven
 }
 
 dependencies {
@@ -61,10 +59,10 @@ dependencies {
 		officialMojangMappings { nameSyntheticMembers = false }
 		parchment("org.parchmentmc.data:parchment-${minecraft_version}:${common.mod.dep("parchment_version")}@zip")
 	})
-    "forge"("net.minecraftforge:forge:$minecraft_version-${common.mod.dep("forge_loader")}")
+    "neoForge"("net.neoforged:neoforge:${common.mod.dep("neoforge_loader")}")
 
 	commonBundle(project(common.path, "namedElements")) { isTransitive = false }
-	shadowBundle(project(common.path, "transformProductionForge")) { isTransitive = false }
+	shadowBundle(project(common.path, "transformProductionNeoForge")) { isTransitive = false }
 }
 
 java {
@@ -104,7 +102,7 @@ tasks.shadowJar {
 }
 
 tasks.processResources {
-	properties(listOf("META-INF/mods.toml"),
+	properties(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta"),
 		"id" to mod.id,
 		"name" to mod.id,
 		"version" to mod.version,

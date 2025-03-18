@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerChunkCache;
@@ -14,10 +15,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
+
+import org.jetbrains.annotations.NotNull;
+
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
 public class ChunkManager extends SavedData {
@@ -43,10 +47,11 @@ public class ChunkManager extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag compoundTag) {
-		compoundTag.putLongArray("LoadedChunks", this.chunks.toLongArray());
-		return compoundTag;
-	}
+    @NotNull
+	public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putLongArray("LoadedChunks", this.chunks.toLongArray());
+        return tag;
+    }
 
 	/**
 	 * Use {@link rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib#queueForceLoad(ServerLevel, int, int)}.

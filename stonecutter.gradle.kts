@@ -7,7 +7,7 @@ plugins {
 	id("architectury-plugin") version "3.4.+" apply false
 	id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 }
-stonecutter active "1.20.1" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.1" /* [SC] DO NOT EDIT */
 
 stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
 	group = "project"
@@ -47,6 +47,10 @@ for (it in stonecutter.tree.nodes) {
 		group = "project"
 		dependsOn("run$type")
 	}
+    it.project.tasks.register("buildActive") {
+        group = "project"
+        dependsOn("buildAndCollect")
+    }
 }
 
 subprojects {

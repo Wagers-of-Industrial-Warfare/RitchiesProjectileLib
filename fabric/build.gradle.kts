@@ -53,25 +53,25 @@ loom {
 
 repositories {
 	maven("https://mvn.devos.one/snapshots/") // Porting Lib
-	maven("https://jitpack.io/") // Mixin Extras, Fabric ASM
+	strictMaven("https://jitpack.io/", "com.github.llamalad7.mixinextras") // Mixin Extras, Fabric ASM
 }
 
 dependencies {
 	minecraft("com.mojang:minecraft:$minecraft_version")
 	mappings(loom.layered {
 		officialMojangMappings { nameSyntheticMembers = false }
-		parchment("org.parchmentmc.data:parchment-${minecraft_version}:${mod.dep("parchment_version")}@zip")
+		parchment("org.parchmentmc.data:parchment-${minecraft_version}:${common.mod.dep("parchment_version")}@zip")
 	})
-	modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
-	modApi("net.fabricmc.fabric-api:fabric-api:${mod.dep("fabric_api_version")}")
+	modImplementation("net.fabricmc:fabric-loader:${common.mod.dep("fabric_loader")}")
+	modApi("net.fabricmc.fabric-api:fabric-api:${common.mod.dep("fabric_api_version")}+${minecraft_version}")
 
     for (module in mod.dep("porting_lib_modules").split(",")) {
-        modApi(include("io.github.fabricators_of_create.Porting-Lib:$module:${mod.dep("porting_lib_version")}") { exclude(module = "loot") })
+        modApi(include("io.github.fabricators_of_create.Porting-Lib:$module:${common.mod.dep("porting_lib_version")}") { exclude(module = "loot") })
     }
 
-    modApi(include("curse.maven:forge-config-api-port-fabric-547434:${mod.dep("config_api_id")}"){})
-    modApi(include("com.electronwill.night-config:core:${mod.dep("night_config_version")}"){})
-    modApi(include("com.electronwill.night-config:toml:${mod.dep("night_config_version")}"){})
+    modApi(include("curse.maven:forge-config-api-port-fabric-547434:${common.mod.dep("config_api_id")}"){})
+    modApi(include("com.electronwill.night-config:core:${common.mod.dep("night_config_version")}"){})
+    modApi(include("com.electronwill.night-config:toml:${common.mod.dep("night_config_version")}"){})
 
     implementation("com.google.code.findbugs:jsr305:3.0.1")
 
