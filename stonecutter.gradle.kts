@@ -69,7 +69,7 @@ subprojects {
 		repositories {
 			maven {
 				name = "GitHubPackages"
-				url = uri("https://maven.pkg.github.com/cannoneers-of-create/createbigcannons")
+				url = uri("https://maven.pkg.github.com/wagers-of-industrial-warfare/ritchiesprojectilelib")
 				credentials {
 					username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
 					password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
@@ -77,7 +77,7 @@ subprojects {
 			}
 			maven {
 				name = "realRobotixMaven"
-				url = uri("https://maven.realrobotix.me/createbigcannons")
+				url = uri("https://maven.realrobotix.me/ritchiesprojectilelib")
 				credentials(PasswordCredentials::class)
 			}
 			mavenLocal()
