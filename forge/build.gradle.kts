@@ -44,7 +44,7 @@ loom {
 	accessWidenerPath = common.loom.accessWidenerPath
 	forge.convertAccessWideners = true
 	forge.mixinConfigs(
-		"${mod.id}-common.mixins.json",
+		"${mod.id}-forge.mixins.json",
 		"${mod.id}.mixins.json",
 	)
 

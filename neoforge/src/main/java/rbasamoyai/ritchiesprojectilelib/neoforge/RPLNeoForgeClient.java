@@ -5,7 +5,6 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.bus.api.IEventBus;
 import rbasamoyai.ritchiesprojectilelib.RPLClient;
-import rbasamoyai.ritchiesprojectilelib.network.neoforge.RPLNetworkImpl;
 
 public class RPLNeoForgeClient {
 

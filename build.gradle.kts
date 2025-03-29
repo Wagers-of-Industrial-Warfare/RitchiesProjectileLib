@@ -17,6 +17,10 @@ architectury.common(stonecutter.tree.branches.mapNotNull {
 	else it.project.prop("loom.platform")
 })
 
+stonecutter {
+    replacement(eval(minecraft_version, "<1.21"), "ModConfigSpec", "ForgeConfigSpec", identifier = "RPLConfigs")
+}
+
 loom {
 	silentMojangMappingsLicense()
 	accessWidenerPath = rootProject.file("src/main/resources/${mod.id}.accesswidener")

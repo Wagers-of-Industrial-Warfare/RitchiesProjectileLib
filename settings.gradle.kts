@@ -10,7 +10,7 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.6-alpha.11"
+	id("dev.kikugie.stonecutter") version "0.6-beta.1"
 }
 
 stonecutter {
@@ -18,6 +18,7 @@ stonecutter {
 	kotlinController = true
 	create(rootProject) {
 		// Root `src/` functions as the 'common' project
+        vcsVersion = "1.21.1"
 		versions("1.20.1", "1.21.1")
 		branch("fabric") { versions("1.20.1") } // Copies versions from root
 		branch("forge") { versions("1.20.1") }

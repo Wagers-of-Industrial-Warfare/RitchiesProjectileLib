@@ -117,11 +117,11 @@ tasks.jar {
 
 tasks.processResources {
 	properties(listOf("fabric.mod.json"),
-		"version" to mod.version,
-		"fabric_loader_version" to mod.dep("fabric_loader"),
-		"fabric_api_version" to mod.dep("fabric_api_version"),
+		"version" to common.mod.version,
+		"fabric_loader_version" to common.mod.dep("fabric_loader"),
+		"fabric_api_version" to common.mod.dep("fabric_api_version"),
 		"minecraft_version" to minecraft_version,
-        "porting_lib_version" to mod.dep("porting_lib_version")
+        "porting_lib_version" to common.mod.dep("porting_lib_version")
 	)
 }
 
