@@ -14,9 +14,9 @@ import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
 @Mod(RitchiesProjectileLib.MOD_ID)
-public class RitchiesProjectileLibForge {
+public class RitchiesProjectileLibNeoForge {
 
-    public RitchiesProjectileLibForge(IEventBus modBus) {
+    public RitchiesProjectileLibNeoForge(IEventBus modBus) {
         RitchiesProjectileLib.init();
 
         ModLoadingContext mlContext = ModLoadingContext.get();
@@ -34,7 +34,7 @@ public class RitchiesProjectileLibForge {
 
     public void onPlayerLogin(final PlayerLoggedInEvent evt) {
         if (evt.getEntity() instanceof ServerPlayer splayer) {
-            RitchiesProjectileLib.onPlayerJoin(splayer);
+            //RitchiesProjectileLib.onPlayerJoin(splayer); //todo: packet not registered at this point for whatever reason
         }
     }
 

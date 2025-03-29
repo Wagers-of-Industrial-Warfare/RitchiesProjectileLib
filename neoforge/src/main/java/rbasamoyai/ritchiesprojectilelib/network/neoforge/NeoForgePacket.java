@@ -8,13 +8,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.jetbrains.annotations.NotNull;
 
-import rbasamoyai.ritchiesprojectilelib.network.RPLNetwork;
 import rbasamoyai.ritchiesprojectilelib.network.RootPacket;
 
 import static rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib.resource;
 
 public record NeoForgePacket(RootPacket pkt) implements CustomPacketPayload {
-    public static final Type<NeoForgePacket> TYPE = new Type<>(resource("NeoForgePacket"));
+    public static final Type<NeoForgePacket> TYPE = new Type<>(resource("neo_forge_packet"));
 
     public static final StreamCodec<FriendlyByteBuf, NeoForgePacket> STREAM_CODEC = new RPLCodec();
 

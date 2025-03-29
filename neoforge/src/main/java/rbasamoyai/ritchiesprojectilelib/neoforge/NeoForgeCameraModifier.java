@@ -3,11 +3,11 @@ package rbasamoyai.ritchiesprojectilelib.neoforge;
 import net.neoforged.neoforge.client.event.ViewportEvent.ComputeCameraAngles;
 import rbasamoyai.ritchiesprojectilelib.effects.CameraModifier;
 
-public class ForgeCameraModifier implements CameraModifier {
+public class NeoForgeCameraModifier implements CameraModifier {
 
     private final ComputeCameraAngles cameraSetup;
 
-    public ForgeCameraModifier(ComputeCameraAngles cameraSetup) {
+    public NeoForgeCameraModifier(ComputeCameraAngles cameraSetup) {
         this.cameraSetup = cameraSetup;
     }
 

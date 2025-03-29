@@ -37,7 +37,7 @@ public class ChunkManager extends SavedData {
     //? if >=1.21 {
     public static SavedData.Factory<ChunkManager> factory() {
         return new SavedData.Factory(ChunkManager::new, (tag, provider) -> load((CompoundTag) tag, (HolderLookup.Provider) provider), DataFixTypes.SAVED_DATA_FORCED_CHUNKS);
-    }
+    } //todo: check if this is actually the correct way to do this
     //?}
 
     public ChunkManager(LongOpenHashSet chunks) {

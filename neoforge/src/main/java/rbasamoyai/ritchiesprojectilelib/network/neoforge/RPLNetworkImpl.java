@@ -16,7 +16,7 @@ public class RPLNetworkImpl {
 
     public static void register(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(VERSION);
-        registrar.playBidirectional(NeoForgePacket.TYPE, NeoForgePacket.STREAM_CODEC, new DirectionalPayloadHandler<>(NeoForgePacket::handle, NeoForgePacket::handle));
+		registrar.commonBidirectional(NeoForgePacket.TYPE, NeoForgePacket.STREAM_CODEC, new DirectionalPayloadHandler<>(NeoForgePacket::handle, NeoForgePacket::handle));
     }
 
     public static void sidedInit() {
