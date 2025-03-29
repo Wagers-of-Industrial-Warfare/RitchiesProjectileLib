@@ -69,7 +69,7 @@ dependencies {
         modApi(include("io.github.fabricators_of_create.Porting-Lib:$module:${common.mod.dep("porting_lib_version")}") { exclude(module = "loot") })
     }
 
-    modApi(include("curse.maven:forge-config-api-port-fabric-547434:${common.mod.dep("config_api_id")}"){})
+    modApi(include("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${common.mod.dep("config_api_version")}"){})
     modApi(include("com.electronwill.night-config:core:${common.mod.dep("night_config_version")}"){})
     modApi(include("com.electronwill.night-config:toml:${common.mod.dep("night_config_version")}"){})
 

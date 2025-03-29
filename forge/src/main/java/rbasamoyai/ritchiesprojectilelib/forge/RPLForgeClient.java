@@ -1,4 +1,4 @@
-package rbasamoyai.ritchiesprojectilelib.forge;
+package rbasamoyai.ritchiesprojectilelib.neoforge;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ViewportEvent;

@@ -9,6 +9,8 @@ import java.util.concurrent.Executor;
 public interface RootPacket {
 
 	void rootEncode(FriendlyByteBuf buf);
-	void handle(Executor exec, PacketListener listener, ServerPlayer sender);
-
+    void handle();
+	default void handle(Executor exec, PacketListener listener, ServerPlayer sender) {
+        handle();
+    }
 }

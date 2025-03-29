@@ -1,6 +1,6 @@
-package rbasamoyai.ritchiesprojectilelib.forge;
+package rbasamoyai.ritchiesprojectilelib.neoforge;
 
-import net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles;
+import net.neoforged.neoforge.client.event.ViewportEvent.ComputeCameraAngles;
 import rbasamoyai.ritchiesprojectilelib.effects.CameraModifier;
 
 public class ForgeCameraModifier implements CameraModifier {

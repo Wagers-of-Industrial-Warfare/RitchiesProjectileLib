@@ -40,7 +40,7 @@ public record ClientboundPreciseMotionSyncPacket(int entityId, double x, double 
 	}
 
 	@Override
-	public void handle(Executor exec, PacketListener listener, ServerPlayer sender) {
+	public void handle() {
 		EnvExecute.executeOnClient(() -> () -> RPLClientHandlers.syncPreciseMotion(this));
 	}
 

@@ -63,6 +63,7 @@ subprojects {
 
 		strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
 		strictMaven("https://cursemaven.com", "curse.maven")
+        strictMaven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/", "fuzs.forgeconfigapiport")
 	}
 	publishing {
 		repositories {

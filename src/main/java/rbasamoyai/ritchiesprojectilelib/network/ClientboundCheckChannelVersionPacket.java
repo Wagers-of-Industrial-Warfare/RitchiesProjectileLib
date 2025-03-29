@@ -20,7 +20,7 @@ public record ClientboundCheckChannelVersionPacket(String serverVersion) impleme
 	}
 
 	@Override
-	public void handle(Executor exec, PacketListener listener, ServerPlayer sender) {
+	public void handle() {
 		EnvExecute.executeOnClient(() -> () -> RPLClientHandlers.checkVersion(this));
 	}
 

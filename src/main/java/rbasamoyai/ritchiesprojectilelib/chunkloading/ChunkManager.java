@@ -13,6 +13,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -33,6 +34,10 @@ public class ChunkManager extends SavedData {
 
 	public ChunkManager() { this(new LongOpenHashSet()); }
 
+    public static SavedData.Factory<ChunkManager> factory() {
+        return new SavedData.Factory(ChunkManager::new, (tag, provider) -> load((CompoundTag) tag, (HolderLookup.Provider) provider), DataFixTypes.SAVED_DATA_FORCED_CHUNKS);
+    }
+
     public ChunkManager(LongOpenHashSet chunks) {
         this.chunks = chunks;
 		this.inQueue = new LongOpenHashSet(this.chunks);
@@ -40,7 +45,7 @@ public class ChunkManager extends SavedData {
 			this.queue.enqueue(packedPos);
     }
 
-    public static ChunkManager load(CompoundTag tag) {
+    public static ChunkManager load(CompoundTag tag, HolderLookup.Provider registries) {
 		long[] arr = tag.getLongArray("LoadedChunks");
 		LongOpenHashSet chunks = new LongOpenHashSet(arr);
 		return new ChunkManager(chunks);

@@ -4,18 +4,18 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.config.ModConfig;
 
 public class RPLConfigs {
 
 	public static class Server {
-		public final ForgeConfigSpec.IntValue maxChunksForceLoaded;
-		public final ForgeConfigSpec.IntValue maxChunksLoadedEachTick;
-		public final ForgeConfigSpec.IntValue projectileChunkAge;
-        public final ForgeConfigSpec.IntValue entityLoadTimeout;
+		public final ModConfigSpec.IntValue maxChunksForceLoaded;
+		public final ModConfigSpec.IntValue maxChunksLoadedEachTick;
+		public final ModConfigSpec.IntValue projectileChunkAge;
+        public final ModConfigSpec.IntValue entityLoadTimeout;
 
-		Server(ForgeConfigSpec.Builder builder) {
+		Server(ModConfigSpec.Builder builder) {
 			builder.comment("Server configuration settings for Ritchie's Projectile Library").push("server");
 
 			maxChunksForceLoaded = builder
@@ -42,15 +42,15 @@ public class RPLConfigs {
 		}
 	}
 
-	private static final ForgeConfigSpec serverSpec;
+	private static final ModConfigSpec serverSpec;
 	private static final Server SERVER;
 	static {
-		final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
+		final Pair<Server, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Server::new);
 		serverSpec = specPair.getRight();
 		SERVER = specPair.getLeft();
 	}
 	public static Server server() { return SERVER; }
-	public static void registerConfigs(BiConsumer<ModConfig.Type, ForgeConfigSpec> cons) {
+	public static void registerConfigs(BiConsumer<ModConfig.Type, ModConfigSpec> cons) {
 		cons.accept(ModConfig.Type.SERVER, serverSpec);
 	}
 

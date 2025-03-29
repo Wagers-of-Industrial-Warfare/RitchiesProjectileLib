@@ -1,6 +1,7 @@
 package rbasamoyai.ritchiesprojectilelib.network;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.DisconnectionDetails;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
@@ -13,8 +14,8 @@ public class RPLClientHandlers {
 		if (RPLNetwork.VERSION.equals(packet.serverVersion())) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.getConnection() != null)
-			mc.getConnection().onDisconnect(Component.literal("Ritchie's Projectile Library on the client uses a different network format than the server.")
-					.append(" Please use a matching format."));
+			mc.getConnection().onDisconnect(new DisconnectionDetails(Component.literal("Ritchie's Projectile Library on the client uses a different network format than the server.")
+					.append(" Please use a matching format.")));
 	}
 
 	public static void syncPreciseMotion(ClientboundPreciseMotionSyncPacket packet) {
@@ -25,7 +26,7 @@ public class RPLClientHandlers {
 
 		int lerpSteps = packet.lerpSteps();
 		if (lerpSteps < 1) lerpSteps = 3;
-		entity.lerpTo(packet.x(), packet.y(), packet.z(), packet.yRot(), packet.xRot(), lerpSteps, false);
+		entity.lerpTo(packet.x(), packet.y(), packet.z(), packet.yRot(), packet.xRot(), lerpSteps);
 		entity.setDeltaMovement(packet.dx(), packet.dy(), packet.dz());
 		entity.setOnGround(packet.onGround());
 	}

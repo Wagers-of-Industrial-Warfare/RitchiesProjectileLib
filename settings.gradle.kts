@@ -10,7 +10,7 @@ pluginManagement {
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.6-alpha.9"
+	id("dev.kikugie.stonecutter") version "0.6-alpha.11"
 }
 
 stonecutter {
@@ -19,7 +19,7 @@ stonecutter {
 	create(rootProject) {
 		// Root `src/` functions as the 'common' project
 		versions("1.20.1", "1.21.1")
-		branch("fabric") // Copies versions from root
+		branch("fabric") { versions("1.20.1") } // Copies versions from root
 		branch("forge") { versions("1.20.1") }
 		branch("neoforge") { versions("1.21.1") }
 	}

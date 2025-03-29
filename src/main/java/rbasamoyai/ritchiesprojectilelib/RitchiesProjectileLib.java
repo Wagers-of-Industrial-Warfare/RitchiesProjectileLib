@@ -23,14 +23,14 @@ public class RitchiesProjectileLib {
         RPLNetwork.init();
     }
 
-    public static ResourceLocation resource(String path) { return new ResourceLocation(MOD_ID, path); }
+    public static ResourceLocation resource(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
 
     public static void onPlayerJoin(ServerPlayer player) {
         RPLNetwork.onPlayerJoin(player);
     }
 
     public static void onServerLevelTickEnd(ServerLevel level) {
-        ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
+        ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager.factory(), CHUNK_MANAGER_ID);
         manager.tick(level);
     }
 
@@ -42,7 +42,7 @@ public class RitchiesProjectileLib {
      * @param chunkZ the Z component of the chunk coordinate
      */
     public static void queueForceLoad(ServerLevel level, int chunkX, int chunkZ) {
-        ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager::load, ChunkManager::new, CHUNK_MANAGER_ID);
+        ChunkManager manager = level.getDataStorage().computeIfAbsent(ChunkManager.factory(), CHUNK_MANAGER_ID);
         manager.queueForceLoad(new ChunkPos(chunkX, chunkZ));
     }
 

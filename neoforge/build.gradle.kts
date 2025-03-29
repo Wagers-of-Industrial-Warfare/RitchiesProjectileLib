@@ -106,7 +106,7 @@ tasks.processResources {
 		"id" to mod.id,
 		"name" to mod.id,
 		"version" to mod.version,
-		"forge_version" to common.mod.dep("forge_loader").substringBefore("."), // only specify major version of forge
+		"neoforge_version" to common.mod.dep("neoforge_loader"),//.substringBefore("."), // only specify major version of forge
 		"minecraft_version" to minecraft_version,
 	)
 }

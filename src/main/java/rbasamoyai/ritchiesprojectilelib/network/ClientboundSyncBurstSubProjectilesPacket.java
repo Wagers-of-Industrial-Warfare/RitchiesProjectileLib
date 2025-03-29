@@ -46,7 +46,7 @@ public record ClientboundSyncBurstSubProjectilesPacket(int entityId, int age, Li
 	}
 
 	@Override
-	public void handle(Executor exec, PacketListener listener, @Nullable ServerPlayer sender) {
+	public void handle() {
 		EnvExecute.executeOnClient(() -> () -> RPLClientHandlers.addBurstSubProjectileData(this));
 	}
 

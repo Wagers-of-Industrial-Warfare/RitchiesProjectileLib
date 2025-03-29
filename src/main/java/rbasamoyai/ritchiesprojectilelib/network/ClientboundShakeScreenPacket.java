@@ -40,7 +40,7 @@ public record ClientboundShakeScreenPacket(@Nullable ResourceLocation modHandler
     }
 
     @Override
-    public void handle(Executor exec, PacketListener listener, ServerPlayer sender) {
+    public void handle() {
         EnvExecute.executeOnClient(() -> () -> RPLClientHandlers.shakeScreen(this));
     }
 
