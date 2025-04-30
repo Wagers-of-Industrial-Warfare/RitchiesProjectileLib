@@ -51,6 +51,11 @@ public abstract class ProjectileBurst extends Projectile {
 		this.age = tag.getInt("Age");
 	}
 
+    //? if <1.21 {
+    /*@Override
+    protected void defineSynchedData() {}
+    *///?}
+
 	protected void syncAllDataToServer() {
 		RPLNetwork.sendToClientTracking(new ClientboundSyncBurstSubProjectilesPacket(this.getId(), this.age,
             new LinkedList<>(this.subProjectiles)), this);
