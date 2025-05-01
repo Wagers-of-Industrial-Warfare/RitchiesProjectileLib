@@ -4,6 +4,7 @@ plugins {
 	`maven-publish`
 	id("dev.architectury.loom")
 	id("architectury-plugin")
+    id("com.gradleup.shadow")
 }
 
 val minecraft_version = stonecutter.current.version
