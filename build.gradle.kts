@@ -19,7 +19,15 @@ architectury.common(stonecutter.tree.branches.mapNotNull {
 })
 
 stonecutter {
-    replacement(eval(minecraft_version, "<1.21"), "ModConfigSpec", "ForgeConfigSpec", identifier = "RPLConfigs")
+    replacements {
+        string {
+            direction = eval(minecraft_version, "<1.21")
+            phase = "LAST"
+            from = "ModConfigSpec"
+            to = "ForgeConfigSpec"
+            id = "RPLConfigs"
+        }
+    }
 }
 
 loom {
@@ -48,15 +56,21 @@ java {
 	sourceCompatibility = java
 }
 
-tasks.build {
-	group = "versioned"
-	description = "Must run through 'chiseledBuild'"
+// todo: for some reason this breaks dependents
+/*publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifact(tasks.remapJar)
+            artifact(tasks.remapSourcesJar)
+            group = mod.group
+            artifactId = mod.id
+        }
+    }
 }
 
 tasks.register<Copy>("buildAndCollect") {
-    group = "versioned"
-    description = "Must run through 'chiseledBuild'"
+    group = "build"
     from(tasks.remapJar.get().archiveFile, tasks.remapSourcesJar.get().archiveFile)
     into(rootProject.layout.buildDirectory.file("libs/${mod.version}/common"))
     dependsOn("build")
-}
+}*/
