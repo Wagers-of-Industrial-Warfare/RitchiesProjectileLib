@@ -9,7 +9,7 @@ plugins {
 
 val minecraft_version = stonecutter.current.version
 
-version = "${mod.version}${if (buildData.release) "" else "-dev"}+mc.${minecraft_version}-common${if (buildData.ci) "-build.${buildData.buildNumber}" else ""}"
+version = "${mod.version}+mc.${minecraft_version}-common${if (buildData.nightly) "-build.${buildData.buildNumber}" else ""}${if (buildData.ci) "" else "-dev"}"
 group = "${mod.group}.common"
 base.archivesName = mod.id
 
