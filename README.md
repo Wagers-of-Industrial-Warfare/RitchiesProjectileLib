@@ -64,10 +64,6 @@ the Architectury subproject you add the mod to. For Fabric, only use `fabric`.
 
 ## Including RPL in your mod jar
 
-Currently, RPL is not downloadable from platforms such as CurseForge and
-Modrinth. This may change in the future, but for now you must include RPL
-in your mod JAR if you use it in your mod code.
-
 To include RPL in your mod JAR, add the appropriate code to the `dependencies`
 block:
 
