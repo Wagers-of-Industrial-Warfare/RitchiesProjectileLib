@@ -2,27 +2,24 @@ package rbasamoyai.ritchiesprojectilelib.chunkloading;
 
 import java.util.Map;
 
+import org.jetbrains.annotations.NotNull;
+
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
-/*? if >=1.21 {*/import net.minecraft.core.HolderLookup;/*?}*/
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
-/*? if >=1.21 {*/import net.minecraft.util.datafix.DataFixTypes;/*?}*/
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk/*? if >=1.21 {*/.status/*?}*/.ChunkStatus;
+import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
-
-import org.jetbrains.annotations.NotNull;
-
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
 public class ChunkManager extends SavedData {
@@ -35,10 +32,10 @@ public class ChunkManager extends SavedData {
 	public ChunkManager() { this(new LongOpenHashSet()); }
 
     //? if >=1.21 {
-    public static SavedData.Factory<ChunkManager> factory() {
+    /*public static SavedData.Factory<ChunkManager> factory() {
         return new SavedData.Factory(ChunkManager::new, (tag, provider) -> load((CompoundTag) tag, (HolderLookup.Provider) provider), DataFixTypes.SAVED_DATA_FORCED_CHUNKS);
     } //todo: check if this is actually the correct way to do this
-    //?}
+    *///?}
 
     public ChunkManager(LongOpenHashSet chunks) {
         this.chunks = chunks;
@@ -47,7 +44,7 @@ public class ChunkManager extends SavedData {
 			this.queue.enqueue(packedPos);
     }
 
-    public static ChunkManager load(CompoundTag tag/*? if >=1.21 {*/, HolderLookup.Provider registries/*?}*/) {
+    public static ChunkManager load(CompoundTag tag/*? if >=1.21 {*//*, HolderLookup.Provider registries*//*?}*/) {
 		long[] arr = tag.getLongArray("LoadedChunks");
 		LongOpenHashSet chunks = new LongOpenHashSet(arr);
 		return new ChunkManager(chunks);
@@ -55,7 +52,7 @@ public class ChunkManager extends SavedData {
 
 	@Override
     @NotNull
-	public CompoundTag save(CompoundTag tag/*? if >=1.21 {*/, HolderLookup.Provider registries/*?}*/) {
+	public CompoundTag save(CompoundTag tag/*? if >=1.21 {*//*, HolderLookup.Provider registries*//*?}*/) {
         tag.putLongArray("LoadedChunks", this.chunks.toLongArray());
         return tag;
     }

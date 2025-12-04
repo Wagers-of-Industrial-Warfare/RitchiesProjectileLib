@@ -1,7 +1,6 @@
 package rbasamoyai.ritchiesprojectilelib.network;
 
 import net.minecraft.client.Minecraft;
-/*? if >=1.21 {*/import net.minecraft.network.DisconnectionDetails;/*?}*/
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
@@ -14,7 +13,7 @@ public class RPLClientHandlers {
 		if (RPLNetwork.VERSION.equals(packet.serverVersion())) return;
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.getConnection() != null)
-			mc.getConnection().onDisconnect(/*? if >=1.21 {*/new DisconnectionDetails/*?}*/(Component.literal("Ritchie's Projectile Library on the client uses a different network format than the server.")
+			mc.getConnection().onDisconnect(/*? if >=1.21 {*//*new DisconnectionDetails*//*?}*/(Component.literal("Ritchie's Projectile Library on the client uses a different network format than the server.")
 					.append(" Please use a matching format.")));
 	}
 
@@ -26,7 +25,7 @@ public class RPLClientHandlers {
 
 		int lerpSteps = packet.lerpSteps();
 		if (lerpSteps < 1) lerpSteps = 3;
-		entity.lerpTo(packet.x(), packet.y(), packet.z(), packet.yRot(), packet.xRot(), lerpSteps/*? if <1.21 {*//*, false*//*?}*/);
+		entity.lerpTo(packet.x(), packet.y(), packet.z(), packet.yRot(), packet.xRot(), lerpSteps/*? if <1.21 {*/, false/*?}*/);
 		entity.setDeltaMovement(packet.dx(), packet.dy(), packet.dz());
 		entity.setOnGround(packet.onGround());
 	}

@@ -43,6 +43,11 @@ dependencies {
 	})
     modImplementation("net.fabricmc:fabric-loader:${mod.dep("fabric_loader")}")
 
+    "io.github.llamalad7:mixinextras-common:${mod.dep("mixin_extras")}".let {
+        annotationProcessor(it)
+        implementation(it)
+    }
+
     modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${mod.dep("config_api_version")}")
     implementation("com.google.code.findbugs:jsr305:3.0.1")
 }

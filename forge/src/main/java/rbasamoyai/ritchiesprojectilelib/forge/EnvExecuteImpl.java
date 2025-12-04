@@ -1,10 +1,10 @@
-package rbasamoyai.ritchiesprojectilelib.neoforge;
+package rbasamoyai.ritchiesprojectilelib.forge;
 
+
+import java.util.function.Supplier;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
-
-import java.util.function.Supplier;
 
 public class EnvExecuteImpl {
 

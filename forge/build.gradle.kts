@@ -63,6 +63,11 @@ dependencies {
 	})
     "forge"("net.minecraftforge:forge:$minecraft_version-${common.mod.dep("forge_loader")}")
 
+    "io.github.llamalad7:mixinextras-forge:${common.mod.dep("mixin_extras")}".let {
+        annotationProcessor(it)
+        implementation(it)
+    }
+
 	commonBundle(project(common.path, "namedElements")) { isTransitive = false }
 	shadowBundle(project(common.path, "transformProductionForge")) { isTransitive = false }
 }

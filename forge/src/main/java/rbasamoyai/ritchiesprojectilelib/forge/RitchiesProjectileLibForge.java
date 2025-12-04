@@ -1,4 +1,4 @@
-package rbasamoyai.ritchiesprojectilelib.neoforge;
+package rbasamoyai.ritchiesprojectilelib.forge;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
