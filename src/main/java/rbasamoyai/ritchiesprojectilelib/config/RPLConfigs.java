@@ -5,8 +5,12 @@ import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.neoforged.fml.config.ModConfig;
+//? if <1.21.1 {
+/*import net.minecraftforge.common.ModConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
+*///?} else {
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.config.ModConfig;
 //?}
 
 

@@ -1,7 +1,7 @@
 package rbasamoyai.ritchiesprojectilelib.network;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.DisconnectionDetails;
+/*? if >=1.21 {*/import net.minecraft.network.DisconnectionDetails;/*?}*/
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import rbasamoyai.ritchiesprojectilelib.RitchiesProjectileLib;
