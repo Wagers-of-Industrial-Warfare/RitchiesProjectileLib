@@ -25,9 +25,9 @@ public class RitchiesProjectileLib {
 
     public static ResourceLocation resource(String path) {
         //? if >=1.21 {
-        /*return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
-        *///?} else
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        //?} else
+        /*return new ResourceLocation(MOD_ID, path);*/
     }
 
     public static void onPlayerJoin(ServerPlayer player) {
@@ -36,10 +36,10 @@ public class RitchiesProjectileLib {
 
     private static ChunkManager getChunkManager(ServerLevel level) {
         //? if >=1.21 {
-        /*return level.getDataStorage().computeIfAbsent(ChunkManager.factory(), CHUNK_MANAGER_ID);
-        *///?} else {
-        return level.getDataStorage().computeIfAbsent(ChunkManager::load,ChunkManager::new, CHUNK_MANAGER_ID);
-        //?}
+        return level.getDataStorage().computeIfAbsent(ChunkManager.factory(), CHUNK_MANAGER_ID);
+        //?} else {
+        /*return level.getDataStorage().computeIfAbsent(ChunkManager::load,ChunkManager::new, CHUNK_MANAGER_ID);
+        *///?}
     }
 
     public static void onServerLevelTickEnd(ServerLevel level) {
