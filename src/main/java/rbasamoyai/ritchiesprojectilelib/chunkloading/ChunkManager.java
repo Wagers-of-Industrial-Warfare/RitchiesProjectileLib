@@ -85,6 +85,8 @@ public class ChunkManager extends SavedData {
                 BlockPos bpos = new BlockPos(SectionPos.sectionToBlockCoord(cpos.x), 0, SectionPos.sectionToBlockCoord(cpos.z));
                 if (level.isPositionEntityTicking(bpos))
                     age = DEFAULT_AGE;
+                else if (!isAreaLoaded(level, cpos))
+                    continue; // Still loading or generating: the entity load timeout starts once the area has loaded
             }
             int newAge = age - 1;
 			entry.setValue(newAge);
@@ -125,6 +127,20 @@ public class ChunkManager extends SavedData {
 		this.queue.trim();
 		this.chunks.trim();
 		this.setDirty();
+	}
+
+	/**
+	 * A chunk only starts ticking entities once every chunk within 2 of it has loaded, and in new terrain generating
+	 * them can take longer than any sensible timeout.
+	 */
+	private static boolean isAreaLoaded(ServerLevel level, ChunkPos cpos) {
+		for (int x = -2; x <= 2; ++x) {
+			for (int z = -2; z <= 2; ++z) {
+				if (level.getChunkSource().getChunkNow(cpos.x + x, cpos.z + z) == null)
+					return false;
+			}
+		}
+		return true;
 	}
 
 }
