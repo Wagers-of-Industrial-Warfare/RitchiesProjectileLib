@@ -12,15 +12,9 @@ import net.minecraft.core.BlockPos;
 /*? if >=1.21 {*/import net.minecraft.core.HolderLookup;/*?}*/
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.TicketType;
 /*? if >=1.21 {*/import net.minecraft.util.datafix.DataFixTypes;/*?}*/
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk/*? if >=1.21 {*/.status/*?}*/.ChunkStatus;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
@@ -110,7 +104,9 @@ public class ChunkManager extends SavedData {
 			if (this.loaded.containsKey(packedPos) && this.loaded.get(packedPos) > -1) {
 				this.loaded.put(packedPos, DEFAULT_AGE);
 				expired.remove(packedPos);
-			} else if (!vanillaForcedChunks.contains(packedPos) && loadChunkNoGenerate(level, chunkPos)) {
+			} else if (!vanillaForcedChunks.contains(packedPos)) {
+				// Never wait for the chunk on the server thread: the forced ticket has it loaded (or generated) by the
+				// chunk system's workers, and the -1 age above waits for it to tick entities, up to entityLoadTimeout.
 				this.loaded.put(packedPos, -1);
 				level.getChunkSource().updateChunkForced(chunkPos, true);
 			} else {
@@ -130,20 +126,5 @@ public class ChunkManager extends SavedData {
 		this.chunks.trim();
 		this.setDirty();
 	}
-
-	// Largely modeled after CraftBukkit World#loadChunk
-
-	private static boolean loadChunkNoGenerate(ServerLevel level, ChunkPos cpos) {
-		ServerChunkCache source = level.getChunkSource();
-		ChunkAccess immediate = source.getChunkNow(cpos.x, cpos.z);
-		if (immediate != null)
-			return true;
-		ChunkAccess access = source.getChunk(cpos.x, cpos.z, ChunkStatus.EMPTY, true);
-		if (access instanceof ProtoChunk) {
-			source.removeRegionTicket(TicketType.UNKNOWN, cpos, -11, cpos);
-			access = source.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, true);
-		}
-        return access instanceof LevelChunk;
-    }
 
 }
