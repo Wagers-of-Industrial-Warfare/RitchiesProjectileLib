@@ -41,9 +41,9 @@ public class RPLConfigs {
 					.defineInRange("projectileChunkAge", 3, 1, 20);
 
             entityLoadTimeout = builder
-                    .comment("[in Ticks]", "How long chunks loaded by this mod last for before being unloaded if they have not yet loaded entities.")
+                    .comment("[in Ticks]", "How long chunks loaded by this mod last for before being unloaded if they have not yet loaded entities, counted from when the chunk and the chunks around it have loaded.")
                     .translation("ritchiesprojectilelib.configgui.entityLoadTimeout")
-                    .defineInRange("entityLoadTimeout", 10, 1, 200);
+                    .defineInRange("entityLoadTimeout", 200, 1, 200);
 
 			builder.pop();
 		}

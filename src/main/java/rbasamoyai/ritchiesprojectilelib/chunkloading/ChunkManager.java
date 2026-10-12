@@ -12,15 +12,9 @@ import net.minecraft.core.BlockPos;
 /*? if >=1.21 {*/import net.minecraft.core.HolderLookup;/*?}*/
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.TicketType;
 /*? if >=1.21 {*/import net.minecraft.util.datafix.DataFixTypes;/*?}*/
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk/*? if >=1.21 {*/.status/*?}*/.ChunkStatus;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.saveddata.SavedData;
 import rbasamoyai.ritchiesprojectilelib.config.RPLConfigs;
 
@@ -91,6 +85,8 @@ public class ChunkManager extends SavedData {
                 BlockPos bpos = new BlockPos(SectionPos.sectionToBlockCoord(cpos.x), 0, SectionPos.sectionToBlockCoord(cpos.z));
                 if (level.isPositionEntityTicking(bpos))
                     age = DEFAULT_AGE;
+                else if (!isAreaLoaded(level, cpos))
+                    continue; // Still loading or generating: the entity load timeout starts once the area has loaded
             }
             int newAge = age - 1;
 			entry.setValue(newAge);
@@ -110,7 +106,9 @@ public class ChunkManager extends SavedData {
 			if (this.loaded.containsKey(packedPos) && this.loaded.get(packedPos) > -1) {
 				this.loaded.put(packedPos, DEFAULT_AGE);
 				expired.remove(packedPos);
-			} else if (!vanillaForcedChunks.contains(packedPos) && loadChunkNoGenerate(level, chunkPos)) {
+			} else if (!vanillaForcedChunks.contains(packedPos)) {
+				// Never wait for the chunk on the server thread: the forced ticket has it loaded (or generated) by the
+				// chunk system's workers, and the -1 age above waits for it to tick entities, up to entityLoadTimeout.
 				this.loaded.put(packedPos, -1);
 				level.getChunkSource().updateChunkForced(chunkPos, true);
 			} else {
@@ -131,19 +129,18 @@ public class ChunkManager extends SavedData {
 		this.setDirty();
 	}
 
-	// Largely modeled after CraftBukkit World#loadChunk
-
-	private static boolean loadChunkNoGenerate(ServerLevel level, ChunkPos cpos) {
-		ServerChunkCache source = level.getChunkSource();
-		ChunkAccess immediate = source.getChunkNow(cpos.x, cpos.z);
-		if (immediate != null)
-			return true;
-		ChunkAccess access = source.getChunk(cpos.x, cpos.z, ChunkStatus.EMPTY, true);
-		if (access instanceof ProtoChunk) {
-			source.removeRegionTicket(TicketType.UNKNOWN, cpos, -11, cpos);
-			access = source.getChunk(cpos.x, cpos.z, ChunkStatus.FULL, true);
+	/**
+	 * A chunk only starts ticking entities once every chunk within 2 of it has loaded, and in new terrain generating
+	 * them can take longer than any sensible timeout.
+	 */
+	private static boolean isAreaLoaded(ServerLevel level, ChunkPos cpos) {
+		for (int x = -2; x <= 2; ++x) {
+			for (int z = -2; z <= 2; ++z) {
+				if (level.getChunkSource().getChunkNow(cpos.x + x, cpos.z + z) == null)
+					return false;
+			}
 		}
-        return access instanceof LevelChunk;
-    }
+		return true;
+	}
 
 }
